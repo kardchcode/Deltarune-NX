@@ -37,18 +37,4 @@ push.v [array]input_held
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-
-//This commented section is a debugger mode enabler, experimentally dedicated to jump to 
-//the first free-moving room so I don't have to "design a vessel" every time I enter the 
-//game you know...
-/* 
-ScriptMessage("Debug mode enabler\nby krzys_h");
-
-var scr_debug = Data.Scripts.ByName("scr_debug")?.Code;
-scr_debug.Replace(Assembler.Assemble(@"
-pushglb.v global.debug
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-*/
-
 ScriptMessage("Patched!");
