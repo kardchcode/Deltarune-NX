@@ -45,7 +45,7 @@ push.v 320.time
 pop.v.v global.lastsavedtime
 pushglb.v global.lv
 pop.v.v global.lastsavedlv
-push.s "file"@2714
+push.s ""file""@2714
 pushglb.v global.filechoice
 call.i string(argc=1)
 add.v.s
