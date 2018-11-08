@@ -130,6 +130,10 @@ var var_handle7 = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "handle",
 
 var var_handle8 = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "handle", Data.Strings, Data)); //ossafe_file_text_close
 
+var var_str = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "str", Data.Strings, Data)); //substr
+var var_pos = Data.Variables.IndexOf(Data.Variables.DefineLocal(2, "pos", Data.Strings, Data));
+var var_len = Data.Variables.IndexOf(Data.Variables.DefineLocal(3, "len", Data.Strings, Data));
+
 //Ensure the missing functions
 Data.Functions.EnsureDefined("buffer_async_group_begin", Data.Strings);
 Data.Functions.EnsureDefined("buffer_async_group_option", Data.Strings);
@@ -146,9 +150,68 @@ Data.Functions.EnsureDefined("is_undefined", Data.Strings);
 Data.Functions.EnsureDefined("ini_open_from_string", Data.Strings);
 Data.Functions.EnsureDefined("ds_map_set", Data.Strings);
 Data.Functions.EnsureDefined("ds_map_set_post", Data.Strings);
-Data.Functions.EnsureDefined("substr", Data.Strings);
 Data.Functions.EnsureDefined("strlen", Data.Strings);
 Data.Functions.EnsureDefined("ds_map_delete", Data.Strings);
+
+//Extra script (substr)
+substr.Append(Assembler.Assemble(@"
+.localvar 0 arguments
+.localvar 1 str " + var_str + @"
+.localvar 2 pos " + var_pos + @"
+.localvar 3 len " + var_len + @"
+00000: pushi.e -1
+00001: pushi.e 0
+00002: push.v [array]argument
+00004: pop.v.v local.str
+00006: pushi.e -1
+00007: pushi.e 1
+00008: push.v [array]argument
+00010: pop.v.v local.pos
+00012: pushloc.v local.pos
+00014: pushi.e 0
+00015: cmp.i.v LT
+00016: bf 00028
+00017: pushloc.v local.str
+00019: call.i strlen(argc=1)
+00021: pushi.e 1
+00022: add.i.v
+00023: pushloc.v local.pos
+00025: add.v.v
+00026: pop.v.v local.pos
+00028: pushvar.v self.argument_count
+00030: pushi.e 2
+00031: cmp.i.v EQ
+00032: bf 00045
+00033: pushloc.v local.str
+00035: call.i strlen(argc=1)
+00037: pushloc.v local.pos
+00039: sub.v.v
+00040: pushi.e 1
+00041: add.i.v
+00042: pop.v.v local.len
+00044: b 00051
+00045: pushi.e -1
+00046: pushi.e 2
+00047: push.v [array]argument
+00049: pop.v.v local.len
+00051: pushloc.v local.len
+00053: pushi.e 0
+00054: cmp.i.v GT
+00055: bf 00066
+00056: pushloc.v local.len
+00058: pushloc.v local.pos
+00060: pushloc.v local.str
+00062: call.i string_copy(argc=3)
+00064: ret.v
+00065: b func_end
+00066: push.s ""argument1""@36
+00068: conv.s.v
+00069: ret.v
+", Data.Functions, Data.Variables, Data.Strings));
+Data.Code.Add(substr);
+Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = substr.Name });
+Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("substr"), Code = substr });
+Data.Functions.EnsureDefined("substr", Data.Strings);
 
 //Saves savedata(ofc)
 ossafe_savedata_save.Append(Assembler.Assemble(@"
