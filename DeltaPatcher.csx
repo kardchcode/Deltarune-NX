@@ -68,6 +68,8 @@ var ossafe_file_text_close = new UndertaleCode() { Name = Data.Strings.MakeStrin
 var ossafe_file_exists = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_exists") };
 var ossafe_file_delete = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_delete") };
 var substr = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_substr") };
+var strlen = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_strlen") };
+var ds_map_delete = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ds_map_delete") };
 
 //Ensure the missing GLOBAL variables
 Data.Variables.EnsureDefined("osflavor", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
@@ -135,26 +137,36 @@ var var_str = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "str", Data.S
 var var_pos = Data.Variables.IndexOf(Data.Variables.DefineLocal(2, "pos", Data.Strings, Data));
 var var_len = Data.Variables.IndexOf(Data.Variables.DefineLocal(3, "len", Data.Strings, Data));
 
-//Ensure the missing functions TODO: define scripts for this functions!
+//Ensure the missing functions TODO: define scripts for this functions?
 Data.Functions.EnsureDefined("buffer_async_group_begin", Data.Strings);
 Data.Functions.EnsureDefined("buffer_async_group_option", Data.Strings);
-Data.Functions.EnsureDefined("json_encode", Data.Strings);
-Data.Functions.EnsureDefined("string_byte_length", Data.Strings);
 Data.Functions.EnsureDefined("buffer_create", Data.Strings);
 Data.Functions.EnsureDefined("buffer_write", Data.Strings);
 Data.Functions.EnsureDefined("buffer_get_size", Data.Strings);
 Data.Functions.EnsureDefined("buffer_save_async", Data.Strings);
 Data.Functions.EnsureDefined("buffer_async_group_end", Data.Strings);
 Data.Functions.EnsureDefined("buffer_load_async", Data.Strings);
-Data.Functions.EnsureDefined("string_lower", Data.Strings);
-Data.Functions.EnsureDefined("is_undefined", Data.Strings);
-Data.Functions.EnsureDefined("ini_open_from_string", Data.Strings);
 Data.Functions.EnsureDefined("ds_map_set", Data.Strings);
 Data.Functions.EnsureDefined("ds_map_set_post", Data.Strings);
-Data.Functions.EnsureDefined("strlen", Data.Strings);
 Data.Functions.EnsureDefined("ds_map_delete", Data.Strings);
+Data.Functions.EnsureDefined("string_lower", Data.Strings);
+Data.Functions.EnsureDefined("string_byte_length", Data.Strings);
+Data.Functions.EnsureDefined("json_encode", Data.Strings);
+Data.Functions.EnsureDefined("is_undefined", Data.Strings);
+Data.Functions.EnsureDefined("ini_open_from_string", Data.Strings);
 
-//Extra script (substr)
+//Extra scripts for ossafe
+strlen.Append(Assembler.Assemble(@"
+.localvar 0 arguments
+00000: pushvar.v self.argument0
+00002: call.i string_length(argc=1)
+00004: ret.v
+", Data.Functions, Data.Variables, Data.Strings));
+Data.Code.Add(strlen);
+Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = strlen.Name });
+Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("strlen"), Code = strlen });
+Data.Functions.EnsureDefined("strlen", Data.Strings);
+
 substr.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 .localvar 1 str " + var_str + @"
