@@ -78,11 +78,9 @@ Data.Variables.EnsureDefined("savedata_async_load", UndertaleInstruction.Instanc
 Data.Variables.EnsureDefined("savedata_debuginfo", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("current_ini", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 
-
-
-//Ensure the misssing SELF variables
+//Ensure the misssing SELF variable
 Data.Variables.EnsureDefined("undefined", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
-Data.Variables.EnsureDefined("argument1", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data); //TODO: prevent freezing first run time (wtf)
+
 //Side note, some scripts, functions and variables get cloned because of this
 Data.Variables.EnsureDefined("os_type", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("text", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
@@ -328,7 +326,7 @@ ossafe_ini_open.Append(Assembler.Assemble(@"
 00031: call.i is_undefined(argc=1)
 00033: conv.v.b
 00034: bf 00040
-00035: push.s """"@36
+00035: push.s ""argument1""@36
 00037: pop.v.s local.data
 00039: b 00044
 00040: pushloc.v local.file
@@ -592,7 +590,7 @@ ossafe_file_text_readln.Append(Assembler.Assemble(@"
 00050: call.i ds_map_find_value(argc=2)
 00052: cmp.v.v GTE
 00053: bf 00058
-00054: push.s """"@36
+00054: push.s ""argument1""@36
 00056: conv.s.v
 00057: ret.v
 00058: push.s ""text""@5052
@@ -634,7 +632,7 @@ ossafe_file_text_read_string.Append(Assembler.Assemble(@"
 00020: call.i ds_map_find_value(argc=2)
 00022: conv.v.b
 00023: bf 00028
-00024: push.s """"@36
+00024: push.s ""argument1""@36
 00026: conv.s.v
 00027: ret.v
 00028: push.s ""line""@5066
@@ -649,7 +647,7 @@ ossafe_file_text_read_string.Append(Assembler.Assemble(@"
 00044: call.i ds_map_find_value(argc=2)
 00046: cmp.v.v GTE
 00047: bf 00052
-00048: push.s """"@36
+00048: push.s ""argument1""@36
 00050: conv.s.v
 00051: ret.v
 00052: pushi.e 1
@@ -766,7 +764,7 @@ ossafe_file_text_open_write.Append(Assembler.Assemble(@"
 00032: pushloc.v local.handle
 00034: call.i ds_map_set(argc=3)
 00036: popz.v
-00037: push.s """"@36
+00037: push.s ""argument1""@36
 00039: conv.s.v
 00040: push.s ""data""@6241
 00042: conv.s.v
@@ -866,7 +864,7 @@ ossafe_file_text_open_read.Append(Assembler.Assemble(@"
 00106: call.i substr(argc=3)
 00108: pop.v.v local.line
 00110: b 00115
-00111: push.s """"@36
+00111: push.s ""argument1""@36
 00113: pop.v.s local.line
 00115: pushloc.v local.nextline_pos
 00117: pushloc.v local.data
@@ -878,12 +876,12 @@ ossafe_file_text_open_read.Append(Assembler.Assemble(@"
 00127: call.i substr(argc=2)
 00129: pop.v.v local.data
 00131: b 00136
-00132: push.s """"@36
+00132: push.s ""argument1""@36
 00134: pop.v.s local.data
 00136: b 00145
 00137: pushloc.v local.data
 00139: pop.v.v local.line
-00141: push.s """"@36
+00141: push.s ""argument1""@36
 00143: pop.v.s local.data
 00145: pushloc.v local.line
 00147: pushi.e -7
