@@ -67,6 +67,7 @@ var ossafe_file_text_eof = new UndertaleCode() { Name = Data.Strings.MakeString(
 var ossafe_file_text_close = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_text_close") };
 var ossafe_file_exists = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_exists") };
 var ossafe_file_delete = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_delete") };
+var substr = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_substr") };
 
 //Ensure the missing GLOBAL variables
 Data.Variables.EnsureDefined("osflavor", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
@@ -134,7 +135,7 @@ var var_str = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "str", Data.S
 var var_pos = Data.Variables.IndexOf(Data.Variables.DefineLocal(2, "pos", Data.Strings, Data));
 var var_len = Data.Variables.IndexOf(Data.Variables.DefineLocal(3, "len", Data.Strings, Data));
 
-//Ensure the missing functions
+//Ensure the missing functions TODO: define scripts for this functions!
 Data.Functions.EnsureDefined("buffer_async_group_begin", Data.Strings);
 Data.Functions.EnsureDefined("buffer_async_group_option", Data.Strings);
 Data.Functions.EnsureDefined("json_encode", Data.Strings);
