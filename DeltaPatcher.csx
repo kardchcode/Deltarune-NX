@@ -12,6 +12,7 @@ var up_h = Data.Scripts.ByName("up_h")?.Code;
 var down_p = Data.Scripts.ByName("down_p")?.Code;
 var down_h = Data.Scripts.ByName("down_h")?.Code;
 
+
 //Up pressed
 up_p.Replace(Assembler.Assemble(@"
 pushi.e -5
@@ -47,8 +48,7 @@ ret.v
 
 //Fix savedata:
 
-//Declaring and creating necessary variables for code-strings-functions-whatever (extra and ossafe) TODO: LocalsCount argument for each script
-var scr_saveprocess_ut = Data.Scripts.ByName("scr_saveprocess_ut")?.Code;
+//Declaring and creating necessary variables for code-strings-functions-whatever (extra and ossafe) TODO: LocalsCount argument for each script?
 var ossafe_savedata_save = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_save") };
 var ossafe_savedata_load = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_load") };
 var ossafe_ini_open = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_ini_open") };
@@ -69,7 +69,6 @@ var ossafe_file_exists = new UndertaleCode() { Name = Data.Strings.MakeString("g
 var ossafe_file_delete = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_delete") };
 var substr = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_substr") };
 var strlen = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_strlen") };
-var ds_map_delete = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ds_map_delete") };
 
 //Ensure the missing GLOBAL variables
 Data.Variables.EnsureDefined("osflavor", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
@@ -81,8 +80,16 @@ Data.Variables.EnsureDefined("savedata_async_load", UndertaleInstruction.Instanc
 Data.Variables.EnsureDefined("savedata_debuginfo", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("current_ini", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 
-//Ensure the misssing SELF variable
+//Ensure the misssing SELF variable TODO: these shouldn't pop an error w/o declaring them...
 Data.Variables.EnsureDefined("undefined", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
+Data.Variables.EnsureDefined("itemat", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
+Data.Variables.EnsureDefined("itemdf", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
+Data.Variables.EnsureDefined("itemmag", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
+Data.Variables.EnsureDefined("itembolts", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
+Data.Variables.EnsureDefined("itemgrazeamt", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
+Data.Variables.EnsureDefined("itemgrazesize", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
+Data.Variables.EnsureDefined("itemboltspeed", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
+Data.Variables.EnsureDefined("itemspecial", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 
 //Side note, some scripts, functions and variables get cloned because of this
 Data.Variables.EnsureDefined("os_type", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
@@ -1135,6 +1142,731 @@ Data.Code.Add(ossafe_file_delete);
 Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = ossafe_file_delete.Name });
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("ossafe_file_delete"), Code = ossafe_file_delete });
 Data.Functions.EnsureDefined("ossafe_file_delete", Data.Strings);
+
+//Save code fixing:
+
+//Declaring the code in variables
+var scr_save = Data.Scripts.ByName("scr_save")?.Code;
+var scr_saveprocess = Data.Scripts.ByName("scr_saveprocess")?.Code;
+var scr_saveprocess_ut = Data.Scripts.ByName("scr_saveprocess_ut")?.Code;
+
+//custom deltarune saveprocess replacing
+scr_saveprocess.Replace(Assembler.Assemble(@"
+.localvar 0 arguments
+00000: pushglb.v global.time
+00002: pop.v.v global.lastsavedtime
+00004: pushglb.v global.lv
+00006: pop.v.v global.lastsavedlv
+00008: push.s ""filech1_""@2713
+00010: pushvar.v self.argument0
+00012: call.i string(argc=1)
+00014: add.v.s
+00015: pop.v.v self.file
+00017: push.v self.file
+00019: call.i ossafe_file_text_open_write(argc=1)
+00021: pop.v.v self.myfileid
+00023: pushglb.v global.truename
+00025: push.v self.myfileid
+00027: call.i ossafe_file_text_write_string(argc=2)
+00029: popz.v
+00030: push.v self.myfileid
+00032: call.i ossafe_file_text_writeln(argc=1)
+00034: popz.v
+00035: pushi.e 0
+00036: pop.v.i self.i
+00038: push.v self.i
+00040: pushi.e 6
+00041: cmp.i.v LT
+00042: bf 00066
+00043: pushi.e -5
+00044: push.v self.i
+00046: conv.v.i
+00047: push.v [array]othername
+00049: push.v self.myfileid
+00051: call.i ossafe_file_text_write_string(argc=2)
+00053: popz.v
+00054: push.v self.myfileid
+00056: call.i ossafe_file_text_writeln(argc=1)
+00058: popz.v
+00059: push.v self.i
+00061: pushi.e 1
+00062: add.i.v
+00063: pop.v.v self.i
+00065: b 00038
+00066: pushi.e -5
+00067: pushi.e 0
+00068: push.v [array]char
+00070: push.v self.myfileid
+00072: call.i ossafe_file_text_write_real(argc=2)
+00074: popz.v
+00075: push.v self.myfileid
+00077: call.i ossafe_file_text_writeln(argc=1)
+00079: popz.v
+00080: pushi.e -5
+00081: pushi.e 1
+00082: push.v [array]char
+00084: push.v self.myfileid
+00086: call.i ossafe_file_text_write_real(argc=2)
+00088: popz.v
+00089: push.v self.myfileid
+00091: call.i ossafe_file_text_writeln(argc=1)
+00093: popz.v
+00094: pushi.e -5
+00095: pushi.e 2
+00096: push.v [array]char
+00098: push.v self.myfileid
+00100: call.i ossafe_file_text_write_real(argc=2)
+00102: popz.v
+00103: push.v self.myfileid
+00105: call.i ossafe_file_text_writeln(argc=1)
+00107: popz.v
+00108: pushglb.v global.gold
+00110: push.v self.myfileid
+00112: call.i ossafe_file_text_write_real(argc=2)
+00114: popz.v
+00115: push.v self.myfileid
+00117: call.i ossafe_file_text_writeln(argc=1)
+00119: popz.v
+00120: pushglb.v global.xp
+00122: push.v self.myfileid
+00124: call.i ossafe_file_text_write_real(argc=2)
+00126: popz.v
+00127: push.v self.myfileid
+00129: call.i ossafe_file_text_writeln(argc=1)
+00131: popz.v
+00132: pushglb.v global.lv
+00134: push.v self.myfileid
+00136: call.i ossafe_file_text_write_real(argc=2)
+00138: popz.v
+00139: push.v self.myfileid
+00141: call.i ossafe_file_text_writeln(argc=1)
+00143: popz.v
+00144: pushglb.v global.inv
+00146: push.v self.myfileid
+00148: call.i ossafe_file_text_write_real(argc=2)
+00150: popz.v
+00151: push.v self.myfileid
+00153: call.i ossafe_file_text_writeln(argc=1)
+00155: popz.v
+00156: pushglb.v global.invc
+00158: push.v self.myfileid
+00160: call.i ossafe_file_text_write_real(argc=2)
+00162: popz.v
+00163: push.v self.myfileid
+00165: call.i ossafe_file_text_writeln(argc=1)
+00167: popz.v
+00168: pushglb.v global.darkzone
+00170: push.v self.myfileid
+00172: call.i ossafe_file_text_write_real(argc=2)
+00174: popz.v
+00175: push.v self.myfileid
+00177: call.i ossafe_file_text_writeln(argc=1)
+00179: popz.v
+00180: pushi.e 0
+00181: pop.v.i self.i
+00183: push.v self.i
+00185: pushi.e 4
+00186: cmp.i.v LT
+00187: bf 00610
+00188: pushi.e -5
+00189: push.v self.i
+00191: conv.v.i
+00192: push.v [array]hp
+00194: push.v self.myfileid
+00196: call.i ossafe_file_text_write_real(argc=2)
+00198: popz.v
+00199: push.v self.myfileid
+00201: call.i ossafe_file_text_writeln(argc=1)
+00203: popz.v
+00204: pushi.e -5
+00205: push.v self.i
+00207: conv.v.i
+00208: push.v [array]maxhp
+00210: push.v self.myfileid
+00212: call.i ossafe_file_text_write_real(argc=2)
+00214: popz.v
+00215: push.v self.myfileid
+00217: call.i ossafe_file_text_writeln(argc=1)
+00219: popz.v
+00220: pushi.e -5
+00221: push.v self.i
+00223: conv.v.i
+00224: push.v [array]at
+00226: push.v self.myfileid
+00228: call.i ossafe_file_text_write_real(argc=2)
+00230: popz.v
+00231: push.v self.myfileid
+00233: call.i ossafe_file_text_writeln(argc=1)
+00235: popz.v
+00236: pushi.e -5
+00237: push.v self.i
+00239: conv.v.i
+00240: push.v [array]df
+00242: push.v self.myfileid
+00244: call.i ossafe_file_text_write_real(argc=2)
+00246: popz.v
+00247: push.v self.myfileid
+00249: call.i ossafe_file_text_writeln(argc=1)
+00251: popz.v
+00252: pushi.e -5
+00253: push.v self.i
+00255: conv.v.i
+00256: push.v [array]mag
+00258: push.v self.myfileid
+00260: call.i ossafe_file_text_write_real(argc=2)
+00262: popz.v
+00263: push.v self.myfileid
+00265: call.i ossafe_file_text_writeln(argc=1)
+00267: popz.v
+00268: pushi.e -5
+00269: push.v self.i
+00271: conv.v.i
+00272: push.v [array]guts
+00274: push.v self.myfileid
+00276: call.i ossafe_file_text_write_real(argc=2)
+00278: popz.v
+00279: push.v self.myfileid
+00281: call.i ossafe_file_text_writeln(argc=1)
+00283: popz.v
+00284: pushi.e -5
+00285: push.v self.i
+00287: conv.v.i
+00288: push.v [array]charweapon
+00290: push.v self.myfileid
+00292: call.i ossafe_file_text_write_real(argc=2)
+00294: popz.v
+00295: push.v self.myfileid
+00297: call.i ossafe_file_text_writeln(argc=1)
+00299: popz.v
+00300: pushi.e -5
+00301: push.v self.i
+00303: conv.v.i
+00304: push.v [array]chararmor1
+00306: push.v self.myfileid
+00308: call.i ossafe_file_text_write_real(argc=2)
+00310: popz.v
+00311: push.v self.myfileid
+00313: call.i ossafe_file_text_writeln(argc=1)
+00315: popz.v
+00316: pushi.e -5
+00317: push.v self.i
+00319: conv.v.i
+00320: push.v [array]chararmor2
+00322: push.v self.myfileid
+00324: call.i ossafe_file_text_write_real(argc=2)
+00326: popz.v
+00327: push.v self.myfileid
+00329: call.i ossafe_file_text_writeln(argc=1)
+00331: popz.v
+00332: pushi.e -5
+00333: push.v self.i
+00335: conv.v.i
+00336: push.v [array]weaponstyle
+00338: push.v self.myfileid
+00340: call.i ossafe_file_text_write_real(argc=2)
+00342: popz.v
+00343: push.v self.myfileid
+00345: call.i ossafe_file_text_writeln(argc=1)
+00347: popz.v
+00348: pushi.e 0
+00349: pop.v.i self.q
+00351: push.v self.q
+00353: pushi.e 4
+00354: cmp.i.v LT
+00355: bf 00563
+00356: pushi.e -5
+00357: push.v self.i
+00359: conv.v.i
+00360: break.e -1
+00361: push.i 32000
+00363: mul.i.i
+00364: push.v self.q
+00366: conv.v.i
+00367: break.e -1
+00368: add.i.i
+00369: push.v [array]itemat
+00371: push.v self.myfileid
+00373: call.i ossafe_file_text_write_real(argc=2)
+00375: popz.v
+00376: push.v self.myfileid
+00378: call.i ossafe_file_text_writeln(argc=1)
+00380: popz.v
+00381: pushi.e -5
+00382: push.v self.i
+00384: conv.v.i
+00385: break.e -1
+00386: push.i 32000
+00388: mul.i.i
+00389: push.v self.q
+00391: conv.v.i
+00392: break.e -1
+00393: add.i.i
+00394: push.v [array]itemdf
+00396: push.v self.myfileid
+00398: call.i ossafe_file_text_write_real(argc=2)
+00400: popz.v
+00401: push.v self.myfileid
+00403: call.i ossafe_file_text_writeln(argc=1)
+00405: popz.v
+00406: pushi.e -5
+00407: push.v self.i
+00409: conv.v.i
+00410: break.e -1
+00411: push.i 32000
+00413: mul.i.i
+00414: push.v self.q
+00416: conv.v.i
+00417: break.e -1
+00418: add.i.i
+00419: push.v [array]itemmag
+00421: push.v self.myfileid
+00423: call.i ossafe_file_text_write_real(argc=2)
+00425: popz.v
+00426: push.v self.myfileid
+00428: call.i ossafe_file_text_writeln(argc=1)
+00430: popz.v
+00431: pushi.e -5
+00432: push.v self.i
+00434: conv.v.i
+00435: break.e -1
+00436: push.i 32000
+00438: mul.i.i
+00439: push.v self.q
+00441: conv.v.i
+00442: break.e -1
+00443: add.i.i
+00444: push.v [array]itembolts
+00446: push.v self.myfileid
+00448: call.i ossafe_file_text_write_real(argc=2)
+00450: popz.v
+00451: push.v self.myfileid
+00453: call.i ossafe_file_text_writeln(argc=1)
+00455: popz.v
+00456: pushi.e -5
+00457: push.v self.i
+00459: conv.v.i
+00460: break.e -1
+00461: push.i 32000
+00463: mul.i.i
+00464: push.v self.q
+00466: conv.v.i
+00467: break.e -1
+00468: add.i.i
+00469: push.v [array]itemgrazeamt
+00471: push.v self.myfileid
+00473: call.i ossafe_file_text_write_real(argc=2)
+00475: popz.v
+00476: push.v self.myfileid
+00478: call.i ossafe_file_text_writeln(argc=1)
+00480: popz.v
+00481: pushi.e -5
+00482: push.v self.i
+00484: conv.v.i
+00485: break.e -1
+00486: push.i 32000
+00488: mul.i.i
+00489: push.v self.q
+00491: conv.v.i
+00492: break.e -1
+00493: add.i.i
+00494: push.v [array]itemgrazesize
+00496: push.v self.myfileid
+00498: call.i ossafe_file_text_write_real(argc=2)
+00500: popz.v
+00501: push.v self.myfileid
+00503: call.i ossafe_file_text_writeln(argc=1)
+00505: popz.v
+00506: pushi.e -5
+00507: push.v self.i
+00509: conv.v.i
+00510: break.e -1
+00511: push.i 32000
+00513: mul.i.i
+00514: push.v self.q
+00516: conv.v.i
+00517: break.e -1
+00518: add.i.i
+00519: push.v [array]itemboltspeed
+00521: push.v self.myfileid
+00523: call.i ossafe_file_text_write_real(argc=2)
+00525: popz.v
+00526: push.v self.myfileid
+00528: call.i ossafe_file_text_writeln(argc=1)
+00530: popz.v
+00531: pushi.e -5
+00532: push.v self.i
+00534: conv.v.i
+00535: break.e -1
+00536: push.i 32000
+00538: mul.i.i
+00539: push.v self.q
+00541: conv.v.i
+00542: break.e -1
+00543: add.i.i
+00544: push.v [array]itemspecial
+00546: push.v self.myfileid
+00548: call.i ossafe_file_text_write_real(argc=2)
+00550: popz.v
+00551: push.v self.myfileid
+00553: call.i ossafe_file_text_writeln(argc=1)
+00555: popz.v
+00556: push.v self.q
+00558: pushi.e 1
+00559: add.i.v
+00560: pop.v.v self.q
+00562: b 00351
+00563: pushi.e 0
+00564: pop.v.i self.j
+00566: push.v self.j
+00568: pushi.e 12
+00569: cmp.i.v LT
+00570: bf 00603
+00571: pushi.e -5
+00572: push.v self.i
+00574: conv.v.i
+00575: break.e -1
+00576: push.i 32000
+00578: mul.i.i
+00579: push.v self.j
+00581: conv.v.i
+00582: break.e -1
+00583: add.i.i
+00584: push.v [array]spell
+00586: push.v self.myfileid
+00588: call.i ossafe_file_text_write_real(argc=2)
+00590: popz.v
+00591: push.v self.myfileid
+00593: call.i ossafe_file_text_writeln(argc=1)
+00595: popz.v
+00596: push.v self.j
+00598: pushi.e 1
+00599: add.i.v
+00600: pop.v.v self.j
+00602: b 00566
+00603: push.v self.i
+00605: pushi.e 1
+00606: add.i.v
+00607: pop.v.v self.i
+00609: b 00183
+00610: pushglb.v global.boltspeed
+00612: push.v self.myfileid
+00614: call.i ossafe_file_text_write_real(argc=2)
+00616: popz.v
+00617: push.v self.myfileid
+00619: call.i ossafe_file_text_writeln(argc=1)
+00621: popz.v
+00622: pushglb.v global.grazeamt
+00624: push.v self.myfileid
+00626: call.i ossafe_file_text_write_real(argc=2)
+00628: popz.v
+00629: push.v self.myfileid
+00631: call.i ossafe_file_text_writeln(argc=1)
+00633: popz.v
+00634: pushglb.v global.grazesize
+00636: push.v self.myfileid
+00638: call.i ossafe_file_text_write_real(argc=2)
+00640: popz.v
+00641: push.v self.myfileid
+00643: call.i ossafe_file_text_writeln(argc=1)
+00645: popz.v
+00646: pushi.e 0
+00647: pop.v.i self.j
+00649: push.v self.j
+00651: pushi.e 13
+00652: cmp.i.v LT
+00653: bf 00725
+00654: pushi.e -5
+00655: push.v self.j
+00657: conv.v.i
+00658: push.v [array]item
+00660: push.v self.myfileid
+00662: call.i ossafe_file_text_write_real(argc=2)
+00664: popz.v
+00665: push.v self.myfileid
+00667: call.i ossafe_file_text_writeln(argc=1)
+00669: popz.v
+00670: pushi.e -5
+00671: push.v self.j
+00673: conv.v.i
+00674: push.v [array]keyitem
+00676: push.v self.myfileid
+00678: call.i ossafe_file_text_write_real(argc=2)
+00680: popz.v
+00681: push.v self.myfileid
+00683: call.i ossafe_file_text_writeln(argc=1)
+00685: popz.v
+00686: pushi.e -5
+00687: push.v self.j
+00689: conv.v.i
+00690: push.v [array]weapon
+00692: push.v self.myfileid
+00694: call.i ossafe_file_text_write_real(argc=2)
+00696: popz.v
+00697: push.v self.myfileid
+00699: call.i ossafe_file_text_writeln(argc=1)
+00701: popz.v
+00702: pushi.e -5
+00703: push.v self.j
+00705: conv.v.i
+00706: push.v [array]armor
+00708: push.v self.myfileid
+00710: call.i ossafe_file_text_write_real(argc=2)
+00712: popz.v
+00713: push.v self.myfileid
+00715: call.i ossafe_file_text_writeln(argc=1)
+00717: popz.v
+00718: push.v self.j
+00720: pushi.e 1
+00721: add.i.v
+00722: pop.v.v self.j
+00724: b 00649
+00725: pushglb.v global.tension
+00727: push.v self.myfileid
+00729: call.i ossafe_file_text_write_real(argc=2)
+00731: popz.v
+00732: push.v self.myfileid
+00734: call.i ossafe_file_text_writeln(argc=1)
+00736: popz.v
+00737: pushglb.v global.maxtension
+00739: push.v self.myfileid
+00741: call.i ossafe_file_text_write_real(argc=2)
+00743: popz.v
+00744: push.v self.myfileid
+00746: call.i ossafe_file_text_writeln(argc=1)
+00748: popz.v
+00749: pushglb.v global.lweapon
+00751: push.v self.myfileid
+00753: call.i ossafe_file_text_write_real(argc=2)
+00755: popz.v
+00756: push.v self.myfileid
+00758: call.i ossafe_file_text_writeln(argc=1)
+00760: popz.v
+00761: pushglb.v global.larmor
+00763: push.v self.myfileid
+00765: call.i ossafe_file_text_write_real(argc=2)
+00767: popz.v
+00768: push.v self.myfileid
+00770: call.i ossafe_file_text_writeln(argc=1)
+00772: popz.v
+00773: pushglb.v global.lxp
+00775: push.v self.myfileid
+00777: call.i ossafe_file_text_write_real(argc=2)
+00779: popz.v
+00780: push.v self.myfileid
+00782: call.i ossafe_file_text_writeln(argc=1)
+00784: popz.v
+00785: pushglb.v global.llv
+00787: push.v self.myfileid
+00789: call.i ossafe_file_text_write_real(argc=2)
+00791: popz.v
+00792: push.v self.myfileid
+00794: call.i ossafe_file_text_writeln(argc=1)
+00796: popz.v
+00797: pushglb.v global.lgold
+00799: push.v self.myfileid
+00801: call.i ossafe_file_text_write_real(argc=2)
+00803: popz.v
+00804: push.v self.myfileid
+00806: call.i ossafe_file_text_writeln(argc=1)
+00808: popz.v
+00809: pushglb.v global.lhp
+00811: push.v self.myfileid
+00813: call.i ossafe_file_text_write_real(argc=2)
+00815: popz.v
+00816: push.v self.myfileid
+00818: call.i ossafe_file_text_writeln(argc=1)
+00820: popz.v
+00821: pushglb.v global.lmaxhp
+00823: push.v self.myfileid
+00825: call.i ossafe_file_text_write_real(argc=2)
+00827: popz.v
+00828: push.v self.myfileid
+00830: call.i ossafe_file_text_writeln(argc=1)
+00832: popz.v
+00833: pushglb.v global.lat
+00835: push.v self.myfileid
+00837: call.i ossafe_file_text_write_real(argc=2)
+00839: popz.v
+00840: push.v self.myfileid
+00842: call.i ossafe_file_text_writeln(argc=1)
+00844: popz.v
+00845: pushglb.v global.ldf
+00847: push.v self.myfileid
+00849: call.i ossafe_file_text_write_real(argc=2)
+00851: popz.v
+00852: push.v self.myfileid
+00854: call.i ossafe_file_text_writeln(argc=1)
+00856: popz.v
+00857: pushglb.v global.lwstrength
+00859: push.v self.myfileid
+00861: call.i ossafe_file_text_write_real(argc=2)
+00863: popz.v
+00864: push.v self.myfileid
+00866: call.i ossafe_file_text_writeln(argc=1)
+00868: popz.v
+00869: pushglb.v global.ladef
+00871: push.v self.myfileid
+00873: call.i ossafe_file_text_write_real(argc=2)
+00875: popz.v
+00876: push.v self.myfileid
+00878: call.i ossafe_file_text_writeln(argc=1)
+00880: popz.v
+00881: pushi.e 0
+00882: pop.v.i self.i
+00884: push.v self.i
+00886: pushi.e 8
+00887: cmp.i.v LT
+00888: bf 00928
+00889: pushi.e -5
+00890: push.v self.i
+00892: conv.v.i
+00893: push.v [array]litem
+00895: push.v self.myfileid
+00897: call.i ossafe_file_text_write_real(argc=2)
+00899: popz.v
+00900: push.v self.myfileid
+00902: call.i ossafe_file_text_writeln(argc=1)
+00904: popz.v
+00905: pushi.e -5
+00906: push.v self.i
+00908: conv.v.i
+00909: push.v [array]phone
+00911: push.v self.myfileid
+00913: call.i ossafe_file_text_write_real(argc=2)
+00915: popz.v
+00916: push.v self.myfileid
+00918: call.i ossafe_file_text_writeln(argc=1)
+00920: popz.v
+00921: push.v self.i
+00923: pushi.e 1
+00924: add.i.v
+00925: pop.v.v self.i
+00927: b 00884
+00928: pushi.e 0
+00929: pop.v.i self.i
+00931: push.v self.i
+00933: pushi.e 9999
+00934: cmp.i.v LT
+00935: bf 00959
+00936: pushi.e -5
+00937: push.v self.i
+00939: conv.v.i
+00940: push.v [array]flag
+00942: push.v self.myfileid
+00944: call.i ossafe_file_text_write_real(argc=2)
+00946: popz.v
+00947: push.v self.myfileid
+00949: call.i ossafe_file_text_writeln(argc=1)
+00951: popz.v
+00952: push.v self.i
+00954: pushi.e 1
+00955: add.i.v
+00956: pop.v.v self.i
+00958: b 00931
+00959: pushglb.v global.plot
+00961: push.v self.myfileid
+00963: call.i ossafe_file_text_write_real(argc=2)
+00965: popz.v
+00966: push.v self.myfileid
+00968: call.i ossafe_file_text_writeln(argc=1)
+00970: popz.v
+00971: pushglb.v global.currentroom
+00973: push.v self.myfileid
+00975: call.i ossafe_file_text_write_real(argc=2)
+00977: popz.v
+00978: push.v self.myfileid
+00980: call.i ossafe_file_text_writeln(argc=1)
+00982: popz.v
+00983: pushglb.v global.time
+00985: push.v self.myfileid
+00987: call.i ossafe_file_text_write_real(argc=2)
+00989: popz.v
+00990: push.v self.myfileid
+00992: call.i ossafe_file_text_close(argc=1)
+00994: popz.v
+", Data.Functions, Data.Variables, Data.Strings));
+
+//save replacement
+scr_save.Replace(Assembler.Assemble(@"
+.localvar 0 arguments
+00000: pushglb.v global.filechoice
+00002: call.i scr_saveprocess(argc=1)
+00004: popz.v
+00005: pushglb.v global.filechoice
+00007: pop.v.v self.filechoicebk2
+00009: pushi.e 9
+00010: pop.v.i global.filechoice
+00012: pushi.e 9
+00013: conv.i.v
+00014: call.i scr_saveprocess(argc=1)
+00016: popz.v
+00017: push.v self.filechoicebk2
+00019: pop.v.v global.filechoice
+00021: push.s ""dr.ini""@2744
+00023: conv.s.v
+00024: call.i ossafe_ini_open(argc=1)
+00026: pop.v.v self.iniwrite
+00028: pushglb.v global.truename
+00030: push.s ""Name""@2747
+00032: conv.s.v
+00033: push.s ""G""@2534
+00035: pushglb.v global.filechoice
+00037: call.i string(argc=1)
+00039: add.v.s
+00040: call.i ini_write_string(argc=3)
+00042: popz.v
+00043: pushglb.v global.lv
+00045: push.s ""Level""@2749
+00047: conv.s.v
+00048: push.s ""G""@2534
+00050: pushglb.v global.filechoice
+00052: call.i string(argc=1)
+00054: add.v.s
+00055: call.i ini_write_real(argc=3)
+00057: popz.v
+00058: pushglb.v global.llv
+00060: push.s ""Love""@2751
+00062: conv.s.v
+00063: push.s ""G""@2534
+00065: pushglb.v global.filechoice
+00067: call.i string(argc=1)
+00069: add.v.s
+00070: call.i ini_write_real(argc=3)
+00072: popz.v
+00073: pushglb.v global.time
+00075: push.s ""Time""@2752
+00077: conv.s.v
+00078: push.s ""G""@2534
+00080: pushglb.v global.filechoice
+00082: call.i string(argc=1)
+00084: add.v.s
+00085: call.i ini_write_real(argc=3)
+00087: popz.v
+00088: pushvar.v self.room
+00090: push.s ""Room""@2753
+00092: conv.s.v
+00093: push.s ""G""@2534
+00095: pushglb.v global.filechoice
+00097: call.i string(argc=1)
+00099: add.v.s
+00100: call.i ini_write_real(argc=3)
+00102: popz.v
+00103: pushi.e -5
+00104: pushi.e 912
+00105: push.v [array]flag
+00107: push.s ""InitLang""@2754
+00109: conv.s.v
+00110: push.s ""G""@2534
+00112: pushglb.v global.filechoice
+00114: call.i string(argc=1)
+00116: add.v.s
+00117: call.i ini_write_real(argc=3)
+00119: popz.v
+00120: call.i ossafe_ini_close(argc=0)
+00122: popz.v
+00124: call.i ossafe_savedata_save(argc=0)
+00126: popz.v
+", Data.Functions, Data.Variables, Data.Strings));
 
 //Saveprocess replacement using ossafe functions TODO: fix stuff here for deltarune
 scr_saveprocess_ut.Replace(Assembler.Assemble(@"
