@@ -162,6 +162,19 @@ Data.Functions.EnsureDefined("json_encode", Data.Strings);
 Data.Functions.EnsureDefined("is_undefined", Data.Strings);
 Data.Functions.EnsureDefined("ini_open_from_string", Data.Strings);
 
+//Quick hot-fix for this specific undeclared string
+Data.Strings.MakeString("is_write");
+Data.Strings.MakeString("line_read");
+Data.Strings.MakeString("Deltarune");
+Data.Strings.MakeString("showdialog");
+Data.Strings.MakeString("savepadindex");
+Data.Strings.MakeString("slottitle");
+Data.Strings.MakeString("Deltarune Save Data"); 
+Data.Strings.MakeString("subtitle");
+Data.Strings.MakeString("deltarune.sav");
+Data.Strings.MakeString("load in progress");
+Data.Strings.MakeString("save in progress");
+
 //Extra scripts for ossafe
 strlen.Append(Assembler.Assemble(@"
 .localvar 0 arguments
@@ -249,31 +262,31 @@ ossafe_savedata_save.Append(Assembler.Assemble(@"
 00011: pushi.e 0
 00012: conv.i.v
 00013: ret.v
-00014: push.s ""Deltarune""@6271
+00014: push.s ""Deltarune""@13216
 00016: conv.s.v
 00017: call.i buffer_async_group_begin(argc=1)
 00019: popz.v
 00020: pushi.e 0
 00021: conv.i.v
-00022: push.s ""showdialog""@6273
+00022: push.s ""showdialog""@13217
 00024: conv.s.v
 00025: call.i buffer_async_group_option(argc=2)
 00027: popz.v
 00028: pushi.e 0
 00029: conv.i.v
-00030: push.s ""savepadindex""@6275
+00030: push.s ""savepadindex""@13218
 00032: conv.s.v
 00033: call.i buffer_async_group_option(argc=2)
 00035: popz.v
-00036: push.s ""Deltarune""@6271
+00036: push.s ""Deltarune""@13216
 00038: conv.s.v
-00039: push.s ""slottitle""@6276
+00039: push.s ""slottitle""@13219
 00041: conv.s.v
 00042: call.i buffer_async_group_option(argc=2)
 00044: popz.v
-00045: push.s ""Deltarune Save Data""@6277
+00045: push.s ""Deltarune Save Data""@13220
 00047: conv.s.v
-00048: push.s ""subtitle""@6278
+00048: push.s ""subtitle""@13221
 00050: conv.s.v
 00051: call.i buffer_async_group_option(argc=2)
 00053: popz.v
@@ -300,14 +313,14 @@ ossafe_savedata_save.Append(Assembler.Assemble(@"
 00085: call.i buffer_get_size(argc=1)
 00087: pushi.e 0
 00088: conv.i.v
-00089: push.s ""deltarune.sav""@6281
+00089: push.s ""deltarune.sav""@13222
 00091: conv.s.v
 00092: pushglb.v global.savedata_buffer
 00094: call.i buffer_save_async(argc=4)
 00096: popz.v
 00097: pushi.e 0
 00098: pop.v.i global.savedata_async_load
-00100: push.s ""save in progress""@6292
+00100: push.s ""save in progress""@13224
 00102: pop.v.s global.savedata_debuginfo
 00104: call.i buffer_async_group_end(argc=0)
 00106: pop.v.v global.savedata_async_id
@@ -325,31 +338,31 @@ ossafe_savedata_load.Append(Assembler.Assemble(@"
 00003: cmp.i.v LTE
 00004: bf 00006
 00005: b func_end
-00006: push.s ""Deltarune""@6271
+00006: push.s ""Deltarune""@13216
 00008: conv.s.v
 00009: call.i buffer_async_group_begin(argc=1)
 00011: popz.v
 00012: pushi.e 0
 00013: conv.i.v
-00014: push.s ""showdialog""@6273
+00014: push.s ""showdialog""@13217
 00016: conv.s.v
 00017: call.i buffer_async_group_option(argc=2)
 00019: popz.v
 00020: pushi.e 0
 00021: conv.i.v
-00022: push.s ""savepadindex""@6275
+00022: push.s ""savepadindex""@13218
 00024: conv.s.v
 00025: call.i buffer_async_group_option(argc=2)
 00027: popz.v
-00028: push.s ""Deltarune""@6271
+00028: push.s ""Deltarune""@13216
 00030: conv.s.v
-00031: push.s ""slottitle""@6276
+00031: push.s ""slottitle""@13219
 00033: conv.s.v
 00034: call.i buffer_async_group_option(argc=2)
 00036: popz.v
-00037: push.s ""Deltarune Save Data""@6277
+00037: push.s ""Deltarune Save Data""@13220
 00039: conv.s.v
-00040: push.s ""subtitle""@6278
+00040: push.s ""subtitle""@13221
 00042: conv.s.v
 00043: call.i buffer_async_group_option(argc=2)
 00045: popz.v
@@ -365,14 +378,14 @@ ossafe_savedata_load.Append(Assembler.Assemble(@"
 00058: conv.i.v
 00059: pushi.e 0
 00060: conv.i.v
-00061: push.s ""deltarune.sav""@6281
+00061: push.s ""deltarune.sav""@13222
 00063: conv.s.v
 00064: pushglb.v global.savedata_buffer
 00066: call.i buffer_load_async(argc=4)
 00068: popz.v
 00069: pushi.e 1
 00070: pop.v.i global.savedata_async_load
-00072: push.s ""load in progress""@6284
+00072: push.s ""load in progress""@13223
 00074: pop.v.s global.savedata_debuginfo
 00076: call.i buffer_async_group_end(argc=0)
 00078: pop.v.v global.savedata_async_id
@@ -551,13 +564,13 @@ ossafe_file_text_writeln.Append(Assembler.Assemble(@"
 00010: b func_end
 00011: pushvar.v self.argument0
 00013: pop.v.v local.handle
-00015: push.s ""data""@6241
+00015: push.s ""data""@13189
 00017: conv.s.v
 00018: pushloc.v local.handle
 00020: call.i ds_map_find_value(argc=2)
-00022: push.s """"@6257
+00022: push.s ""file_text_writeln""@2737
 00024: add.s.v
-00025: push.s ""data""@6241
+00025: push.s ""data""@13189
 00027: conv.s.v
 00028: pushloc.v local.handle
 00030: call.i ds_map_set(argc=3)
@@ -583,13 +596,13 @@ ossafe_file_text_write_string.Append(Assembler.Assemble(@"
 00012: b func_end
 00013: pushvar.v self.argument0
 00015: pop.v.v local.handle
-00017: push.s ""data""@6241
+00017: push.s ""data""@13189
 00019: conv.s.v
 00020: pushloc.v local.handle
 00022: call.i ds_map_find_value(argc=2)
 00024: pushvar.v self.argument1
 00026: add.v.v
-00027: push.s ""data""@6241
+00027: push.s ""data""@13189
 00029: conv.s.v
 00030: pushloc.v local.handle
 00032: call.i ds_map_set(argc=3)
@@ -615,14 +628,14 @@ ossafe_file_text_write_real.Append(Assembler.Assemble(@"
 00012: b func_end
 00013: pushvar.v self.argument0
 00015: pop.v.v local.handle
-00017: push.s ""data""@6241
+00017: push.s ""data""@13189
 00019: conv.s.v
 00020: pushloc.v local.handle
 00022: call.i ds_map_find_value(argc=2)
 00024: pushvar.v self.argument1
 00026: call.i string(argc=1)
 00028: add.v.v
-00029: push.s ""data""@6241
+00029: push.s ""data""@13189
 00031: conv.s.v
 00032: pushloc.v local.handle
 00034: call.i ds_map_set(argc=3)
@@ -650,24 +663,24 @@ ossafe_file_text_readln.Append(Assembler.Assemble(@"
 00013: pop.v.v local.handle
 00015: pushi.e 0
 00016: conv.i.v
-00017: push.s ""line_read""@6253
+00017: push.s ""line_read""@13215
 00019: conv.s.v
 00020: pushloc.v local.handle
 00022: call.i ds_map_set(argc=3)
 00024: popz.v
-00025: push.s ""line""@5066
+00025: push.s ""line""@9883
 00027: conv.s.v
 00028: pushloc.v local.handle
 00030: call.i ds_map_find_value(argc=2)
 00032: pushi.e 1
 00033: add.i.v
-00034: push.s ""line""@5066
+00034: push.s ""line""@9883
 00036: conv.s.v
 00037: pushloc.v local.handle
 00039: call.i ds_map_set_post(argc=3)
 00041: pop.v.v local.line
 00043: pushloc.v local.line
-00045: push.s ""num_lines""@3215
+00045: push.s ""num_lines""@13195
 00047: conv.s.v
 00048: pushloc.v local.handle
 00050: call.i ds_map_find_value(argc=2)
@@ -676,7 +689,7 @@ ossafe_file_text_readln.Append(Assembler.Assemble(@"
 00054: push.s ""argument1""@36
 00056: conv.s.v
 00057: ret.v
-00058: push.s ""text""@5052
+00058: push.s ""text""@13186
 00060: conv.s.v
 00061: pushloc.v local.handle
 00063: call.i ds_map_find_value(argc=2)
@@ -685,7 +698,7 @@ ossafe_file_text_readln.Append(Assembler.Assemble(@"
 00068: pushloc.v local.line
 00070: conv.v.i
 00071: push.v [array]text
-00073: push.s """"@6257
+00073: push.s ""file_text_writeln""@2737
 00075: add.s.v
 00076: ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
@@ -709,7 +722,7 @@ ossafe_file_text_read_string.Append(Assembler.Assemble(@"
 00010: b func_end
 00011: pushvar.v self.argument0
 00013: pop.v.v local.handle
-00015: push.s ""line_read""@6253
+00015: push.s ""line_read""@13215
 00017: conv.s.v
 00018: pushloc.v local.handle
 00020: call.i ds_map_find_value(argc=2)
@@ -718,13 +731,13 @@ ossafe_file_text_read_string.Append(Assembler.Assemble(@"
 00024: push.s ""argument1""@36
 00026: conv.s.v
 00027: ret.v
-00028: push.s ""line""@5066
+00028: push.s ""line""@9883
 00030: conv.s.v
 00031: pushloc.v local.handle
 00033: call.i ds_map_find_value(argc=2)
 00035: pop.v.v local.line
 00037: pushloc.v local.line
-00039: push.s ""num_lines""@3215
+00039: push.s ""num_lines""@13195
 00041: conv.s.v
 00042: pushloc.v local.handle
 00044: call.i ds_map_find_value(argc=2)
@@ -735,12 +748,12 @@ ossafe_file_text_read_string.Append(Assembler.Assemble(@"
 00051: ret.v
 00052: pushi.e 1
 00053: conv.i.v
-00054: push.s ""line_read""@6253
+00054: push.s ""line_read""@13215
 00056: conv.s.v
 00057: pushloc.v local.handle
 00059: call.i ds_map_set(argc=3)
 00061: popz.v
-00062: push.s ""text""@5052
+00062: push.s ""text""@13186
 00064: conv.s.v
 00065: pushloc.v local.handle
 00067: call.i ds_map_find_value(argc=2)
@@ -771,7 +784,7 @@ ossafe_file_text_read_real.Append(Assembler.Assemble(@"
 00010: b func_end
 00011: pushvar.v self.argument0
 00013: pop.v.v local.handle
-00015: push.s ""line_read""@6253
+00015: push.s ""line_read""@13215
 00017: conv.s.v
 00018: pushloc.v local.handle
 00020: call.i ds_map_find_value(argc=2)
@@ -780,13 +793,13 @@ ossafe_file_text_read_real.Append(Assembler.Assemble(@"
 00024: pushi.e 0
 00025: conv.i.v
 00026: ret.v
-00027: push.s ""line""@5066
+00027: push.s ""line""@9883
 00029: conv.s.v
 00030: pushloc.v local.handle
 00032: call.i ds_map_find_value(argc=2)
 00034: pop.v.v local.line
 00036: pushloc.v local.line
-00038: push.s ""num_lines""@3215
+00038: push.s ""num_lines""@13195
 00040: conv.s.v
 00041: pushloc.v local.handle
 00043: call.i ds_map_find_value(argc=2)
@@ -797,12 +810,12 @@ ossafe_file_text_read_real.Append(Assembler.Assemble(@"
 00049: ret.v
 00050: pushi.e 1
 00051: conv.i.v
-00052: push.s ""line_read""@6253
+00052: push.s ""line_read""@13215
 00054: conv.s.v
 00055: pushloc.v local.handle
 00057: call.i ds_map_set(argc=3)
 00059: popz.v
-00060: push.s ""text""@5052
+00060: push.s ""text""@13186
 00062: conv.s.v
 00063: pushloc.v local.handle
 00065: call.i ds_map_find_value(argc=2)
@@ -835,21 +848,21 @@ ossafe_file_text_open_write.Append(Assembler.Assemble(@"
 00013: pop.v.v local.handle
 00015: pushi.e 1
 00016: conv.i.v
-00017: push.s ""is_write""@6240
+00017: push.s ""is_write""@13214
 00019: conv.s.v
 00020: pushloc.v local.handle
 00022: call.i ds_map_set(argc=3)
 00024: popz.v
 00025: pushvar.v self.argument0
 00027: call.i string_lower(argc=1)
-00029: push.s ""filename""@6242
+00029: push.s ""filename""@3399
 00031: conv.s.v
 00032: pushloc.v local.handle
 00034: call.i ds_map_set(argc=3)
 00036: popz.v
 00037: push.s ""argument1""@36
 00039: conv.s.v
-00040: push.s ""data""@6241
+00040: push.s ""data""@13189
 00042: conv.s.v
 00043: pushloc.v local.handle
 00045: call.i ds_map_set(argc=3)
@@ -904,7 +917,7 @@ ossafe_file_text_open_read.Append(Assembler.Assemble(@"
 00046: cmp.i.v GT
 00047: bf 00159
 00048: pushloc.v local.data
-00050: push.s """"@6247
+00050: push.s ""string_byte_length""@13210
 00052: conv.s.v
 00053: call.i string_pos(argc=2)
 00055: pop.v.v local.newline_pos
@@ -925,7 +938,7 @@ ossafe_file_text_open_read.Append(Assembler.Assemble(@"
 00076: sub.i.v
 00077: pushloc.v local.data
 00079: call.i string_char_at(argc=2)
-00081: push.s """"@6251
+00081: push.s ""ds_map_create""@3380
 00083: cmp.s.v EQ
 00084: b 00086
 00085: push.e 0
@@ -980,33 +993,33 @@ ossafe_file_text_open_read.Append(Assembler.Assemble(@"
 00161: pop.v.v self.handle
 00163: pushi.e 0
 00164: conv.i.v
-00165: push.s ""is_write""@6240
+00165: push.s ""is_write""@13214
 00167: conv.s.v
 00168: push.v self.handle
 00170: call.i ds_map_set(argc=3)
 00172: popz.v
 00173: pushloc.v local.lines
-00175: push.s ""text""@5052
+00175: push.s ""text""@13186
 00177: conv.s.v
 00178: push.v self.handle
 00180: call.i ds_map_set(argc=3)
 00182: popz.v
 00183: pushloc.v local.num_lines
-00185: push.s ""num_lines""@3215
+00185: push.s ""num_lines""@13195
 00187: conv.s.v
 00188: push.v self.handle
 00190: call.i ds_map_set(argc=3)
 00192: popz.v
 00193: pushi.e 0
 00194: conv.i.v
-00195: push.s ""line""@5066
+00195: push.s ""line""@9883
 00197: conv.s.v
 00198: push.v self.handle
 00200: call.i ds_map_set(argc=3)
 00202: popz.v
 00203: pushi.e 0
 00204: conv.i.v
-00205: push.s ""line_read""@6253
+00205: push.s ""line_read""@13215
 00207: conv.s.v
 00208: push.v self.handle
 00210: call.i ds_map_set(argc=3)
@@ -1033,11 +1046,11 @@ ossafe_file_text_eof.Append(Assembler.Assemble(@"
 00010: b func_end
 00011: pushvar.v self.argument0
 00013: pop.v.v local.handle
-00015: push.s ""line""@5066
+00015: push.s ""line""@9883
 00017: conv.s.v
 00018: pushloc.v local.handle
 00020: call.i ds_map_find_value(argc=2)
-00022: push.s ""num_lines""@3215
+00022: push.s ""num_lines""@13195
 00024: conv.s.v
 00025: pushloc.v local.handle
 00027: call.i ds_map_find_value(argc=2)
@@ -1064,17 +1077,17 @@ ossafe_file_text_close.Append(Assembler.Assemble(@"
 00010: b func_end
 00011: pushvar.v self.argument0
 00013: pop.v.v local.handle
-00015: push.s ""is_write""@6240
+00015: push.s ""is_write""@13214
 00017: conv.s.v
 00018: pushloc.v local.handle
 00020: call.i ds_map_find_value(argc=2)
 00022: conv.v.b
 00023: bf 00043
-00024: push.s ""data""@6241
+00024: push.s ""data""@13189
 00026: conv.s.v
 00027: pushloc.v local.handle
 00029: call.i ds_map_find_value(argc=2)
-00031: push.s ""filename""@6242
+00031: push.s ""filename""@3399
 00033: conv.s.v
 00034: pushloc.v local.handle
 00036: call.i ds_map_find_value(argc=2)
@@ -1877,7 +1890,7 @@ scr_saveprocess_ut.Replace(Assembler.Assemble(@"
 00006: pop.v.v global.lastsavedtime
 00008: pushglb.v global.lv
 00010: pop.v.v global.lastsavedlv
-00012: push.s ""file""@3371
+00012: push.s ""file""@2714
 00014: pushglb.v global.filechoice
 00016: call.i string(argc=1)
 00018: add.v.s
