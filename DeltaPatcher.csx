@@ -2,7 +2,7 @@
 
 EnsureDataLoaded();
 
-ScriptMessage("DELTARUNE patcher for the Nintendo Switch\nby Kardch\nv0.1");
+ScriptMessage("DELTARUNE patcher for the Nintendo Switch\nv0.1");
 
 //Fix left-stick up and down inverted:
 
@@ -11,7 +11,6 @@ var up_p = Data.Scripts.ByName("up_p")?.Code;
 var up_h = Data.Scripts.ByName("up_h")?.Code;
 var down_p = Data.Scripts.ByName("down_p")?.Code;
 var down_h = Data.Scripts.ByName("down_h")?.Code;
-
 
 //Up pressed
 up_p.Replace(Assembler.Assemble(@"
@@ -174,6 +173,117 @@ Data.Strings.MakeString("subtitle");
 Data.Strings.MakeString("deltarune.sav");
 Data.Strings.MakeString("load in progress");
 Data.Strings.MakeString("save in progress");
+
+//Set osflavor to value 5, basically means it's the switch console 
+Data.GameObjects.ByName("obj_time").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
+.localvar 0 arguments
+pushi.e 5
+pop.v.i global.osflavor
+00000: pushi.e 0
+00001: pop.v.i self.quit_timer
+00003: pushi.e 1
+00004: pop.v.i self.keyboard_active
+00006: pushi.e 1
+00007: pop.v.i self.gamepad_active
+00009: pushi.e 0
+00010: pop.v.i self.gamepad_check_timer
+00012: pushi.e 0
+00013: pop.v.i self.gamepad_id
+00015: push.d 0.4
+00018: pop.v.d self.axis_value
+00020: pushi.e 0
+00021: pop.v.i self.fullscreen_toggle
+00023: pushi.e 0
+00024: pop.v.i self.window_center_toggle
+00026: pushi.e 0
+00027: pop.v.i self.screenshot_number
+00029: pushi.e 320
+00030: conv.i.v
+00031: call.i instance_number(argc=1)
+00033: pushi.e 1
+00034: cmp.i.v GT
+00035: bf 00040
+00036: call.i instance_destroy(argc=0)
+00038: popz.v
+00039: b func_end
+00040: call.i display_get_height(argc=0)
+00042: pop.v.v self.display_height
+00044: call.i display_get_width(argc=0)
+00046: pop.v.v self.display_width
+00048: pushi.e 1
+00049: pop.v.i self.window_size_multiplier
+00051: pushi.e 2
+00052: pop.v.i self._ww
+00054: push.v self._ww
+00056: pushi.e 6
+00057: cmp.i.v LT
+00058: bf 00088
+00059: push.v self.display_width
+00061: pushi.e 640
+00062: push.v self._ww
+00064: mul.v.i
+00065: cmp.v.v GT
+00066: bf 00075
+00067: push.v self.display_height
+00069: pushi.e 480
+00070: push.v self._ww
+00072: mul.v.i
+00073: cmp.v.v GT
+00074: b 00076
+00075: push.e 0
+00076: bf 00081
+00077: push.v self._ww
+00079: pop.v.v self.window_size_multiplier
+00081: push.v self._ww
+00083: pushi.e 1
+00084: add.i.v
+00085: pop.v.v self._ww
+00087: b 00054
+00088: push.v self.window_size_multiplier
+00090: pushi.e 1
+00091: cmp.i.v GT
+00092: bf 00107
+00093: pushi.e 480
+00094: push.v self.window_size_multiplier
+00096: mul.v.i
+00097: pushi.e 640
+00098: push.v self.window_size_multiplier
+00100: mul.v.i
+00101: call.i window_set_size(argc=2)
+00103: popz.v
+00104: pushi.e 1
+00105: pop.v.i self.window_center_toggle
+00107: call.i scr_controls_default(argc=0)
+00109: popz.v
+00110: call.i scr_ascii_input_names(argc=0)
+00112: popz.v
+00113: pushi.e 0
+00114: pop.v.i self.i
+00116: push.v self.i
+00118: pushi.e 10
+00119: cmp.i.v LT
+00120: bf func_end
+00121: pushi.e 0
+00122: pushi.e -5
+00123: push.v self.i
+00125: conv.v.i
+00126: pop.v.i [array]input_pressed
+00128: pushi.e 0
+00129: pushi.e -5
+00130: push.v self.i
+00132: conv.v.i
+00133: pop.v.i [array]input_held
+00135: pushi.e 0
+00136: pushi.e -5
+00137: push.v self.i
+00139: conv.v.i
+00140: pop.v.i [array]input_released
+00142: push.v self.i
+00144: pushi.e 1
+00145: add.i.v
+00146: pop.v.v self.i
+00148: b 00116
+", Data.Functions, Data.Variables, Data.Strings));
 
 //Extra scripts for ossafe
 strlen.Append(Assembler.Assemble(@"
