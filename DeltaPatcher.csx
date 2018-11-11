@@ -174,115 +174,124 @@ Data.Strings.MakeString("deltarune.sav");
 Data.Strings.MakeString("load in progress");
 Data.Strings.MakeString("save in progress");
 
-//Set osflavor to value 5, basically means it's the switch console 
+//Fix some collisions:
+Data.GameObjects.ByName("obj_solidlong").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
+.localvar 0 arguments
+00000: pushi.e 200
+00001: pop.v.i self.image_xscale
+00003: pushi.e 0
+00004: pop.v.i self.image_speed
+", Data.Functions, Data.Variables, Data.Strings));
+
+//Set osflavor to value 5, basically means it's the switch console (hot-fix to avoid future problems)
 Data.GameObjects.ByName("obj_time").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
 .localvar 0 arguments
-pushi.e 5
-pop.v.i global.osflavor
-00000: pushi.e 0
-00001: pop.v.i self.quit_timer
-00003: pushi.e 1
-00004: pop.v.i self.keyboard_active
+00000: pushi.e 5
+00001: pop.v.i global.osflavor
+00003: pushi.e 0
+00004: pop.v.i self.quit_timer
 00006: pushi.e 1
-00007: pop.v.i self.gamepad_active
-00009: pushi.e 0
-00010: pop.v.i self.gamepad_check_timer
+00007: pop.v.i self.keyboard_active
+00009: pushi.e 1
+00010: pop.v.i self.gamepad_active
 00012: pushi.e 0
-00013: pop.v.i self.gamepad_id
-00015: push.d 0.4
-00018: pop.v.d self.axis_value
-00020: pushi.e 0
-00021: pop.v.i self.fullscreen_toggle
+00013: pop.v.i self.gamepad_check_timer
+00015: pushi.e 0
+00016: pop.v.i self.gamepad_id
+00018: push.d 0.4
+00021: pop.v.d self.axis_value
 00023: pushi.e 0
-00024: pop.v.i self.window_center_toggle
+00024: pop.v.i self.fullscreen_toggle
 00026: pushi.e 0
-00027: pop.v.i self.screenshot_number
-00029: pushi.e 320
-00030: conv.i.v
-00031: call.i instance_number(argc=1)
-00033: pushi.e 1
-00034: cmp.i.v GT
-00035: bf 00040
-00036: call.i instance_destroy(argc=0)
-00038: popz.v
-00039: b func_end
-00040: call.i display_get_height(argc=0)
-00042: pop.v.v self.display_height
-00044: call.i display_get_width(argc=0)
-00046: pop.v.v self.display_width
-00048: pushi.e 1
-00049: pop.v.i self.window_size_multiplier
-00051: pushi.e 2
-00052: pop.v.i self._ww
-00054: push.v self._ww
-00056: pushi.e 6
-00057: cmp.i.v LT
-00058: bf 00088
-00059: push.v self.display_width
-00061: pushi.e 640
-00062: push.v self._ww
-00064: mul.v.i
-00065: cmp.v.v GT
-00066: bf 00075
-00067: push.v self.display_height
-00069: pushi.e 480
-00070: push.v self._ww
-00072: mul.v.i
-00073: cmp.v.v GT
-00074: b 00076
-00075: push.e 0
-00076: bf 00081
-00077: push.v self._ww
-00079: pop.v.v self.window_size_multiplier
-00081: push.v self._ww
-00083: pushi.e 1
-00084: add.i.v
-00085: pop.v.v self._ww
-00087: b 00054
-00088: push.v self.window_size_multiplier
-00090: pushi.e 1
-00091: cmp.i.v GT
-00092: bf 00107
-00093: pushi.e 480
-00094: push.v self.window_size_multiplier
-00096: mul.v.i
-00097: pushi.e 640
-00098: push.v self.window_size_multiplier
-00100: mul.v.i
-00101: call.i window_set_size(argc=2)
-00103: popz.v
-00104: pushi.e 1
-00105: pop.v.i self.window_center_toggle
-00107: call.i scr_controls_default(argc=0)
-00109: popz.v
-00110: call.i scr_ascii_input_names(argc=0)
+00027: pop.v.i self.window_center_toggle
+00029: pushi.e 0
+00030: pop.v.i self.screenshot_number
+00032: pushi.e 320
+00033: conv.i.v
+00034: call.i instance_number(argc=1)
+00036: pushi.e 1
+00037: cmp.i.v GT
+00038: bf 00043
+00039: call.i instance_destroy(argc=0)
+00041: popz.v
+00042: b func_end
+00043: call.i display_get_height(argc=0)
+00045: pop.v.v self.display_height
+00047: call.i display_get_width(argc=0)
+00049: pop.v.v self.display_width
+00051: pushi.e 1
+00052: pop.v.i self.window_size_multiplier
+00054: pushi.e 2
+00055: pop.v.i self._ww
+00057: push.v self._ww
+00059: pushi.e 6
+00060: cmp.i.v LT
+00061: bf 00091
+00062: push.v self.display_width
+00064: pushi.e 640
+00065: push.v self._ww
+00067: mul.v.i
+00068: cmp.v.v GT
+00069: bf 00078
+00070: push.v self.display_height
+00072: pushi.e 480
+00073: push.v self._ww
+00075: mul.v.i
+00076: cmp.v.v GT
+00077: b 00079
+00078: push.e 0
+00079: bf 00084
+00080: push.v self._ww
+00082: pop.v.v self.window_size_multiplier
+00084: push.v self._ww
+00086: pushi.e 1
+00087: add.i.v
+00088: pop.v.v self._ww
+00090: b 00057
+00091: push.v self.window_size_multiplier
+00093: pushi.e 1
+00094: cmp.i.v GT
+00095: bf 00110
+00096: pushi.e 480
+00097: push.v self.window_size_multiplier
+00099: mul.v.i
+00100: pushi.e 640
+00101: push.v self.window_size_multiplier
+00103: mul.v.i
+00104: call.i window_set_size(argc=2)
+00106: popz.v
+00107: pushi.e 1
+00108: pop.v.i self.window_center_toggle
+00110: call.i scr_controls_default(argc=0)
 00112: popz.v
-00113: pushi.e 0
-00114: pop.v.i self.i
-00116: push.v self.i
-00118: pushi.e 10
-00119: cmp.i.v LT
-00120: bf func_end
-00121: pushi.e 0
-00122: pushi.e -5
-00123: push.v self.i
-00125: conv.v.i
-00126: pop.v.i [array]input_pressed
-00128: pushi.e 0
-00129: pushi.e -5
-00130: push.v self.i
-00132: conv.v.i
-00133: pop.v.i [array]input_held
-00135: pushi.e 0
-00136: pushi.e -5
-00137: push.v self.i
-00139: conv.v.i
-00140: pop.v.i [array]input_released
-00142: push.v self.i
-00144: pushi.e 1
-00145: add.i.v
-00146: pop.v.v self.i
-00148: b 00116
+00113: call.i scr_ascii_input_names(argc=0)
+00115: popz.v
+00116: pushi.e 0
+00117: pop.v.i self.i
+00119: push.v self.i
+00121: pushi.e 10
+00122: cmp.i.v LT
+00123: bf func_end
+00124: pushi.e 0
+00125: pushi.e -5
+00126: push.v self.i
+00128: conv.v.i
+00129: pop.v.i [array]input_pressed
+00131: pushi.e 0
+00132: pushi.e -5
+00133: push.v self.i
+00135: conv.v.i
+00136: pop.v.i [array]input_held
+00138: pushi.e 0
+00139: pushi.e -5
+00140: push.v self.i
+00142: conv.v.i
+00143: pop.v.i [array]input_released
+00145: push.v self.i
+00147: pushi.e 1
+00148: add.i.v
+00149: pop.v.v self.i
+00151: b 00119
 ", Data.Functions, Data.Variables, Data.Strings));
 
 //Extra scripts for ossafe
