@@ -4,6 +4,27 @@ EnsureDataLoaded();
 
 ScriptMessage("DELTARUNE patcher for the Nintendo Switch\nv0.1");
 
+//Fix some collisions:
+Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
+ InstanceID = Data.GeneralInfo.LastObj++,
+ ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
+ X = 55, Y = 165, ScaleX = 21});
+
+Data.Rooms.ByName("room_torhouse").GameObjects.Add(new UndertaleRoom.GameObject(){   
+ InstanceID = Data.GeneralInfo.LastObj++,
+ ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
+ X = 76, Y = 200, ScaleX = 28});
+
+Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
+ InstanceID = Data.GeneralInfo.LastObj++,
+ ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
+ X = -20, Y = 300, ScaleX = 70});
+
+Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
+ InstanceID = Data.GeneralInfo.LastObj++,
+ ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
+ X = -20, Y = 400, ScaleX = 70});
+
 //Fix left-stick up and down inverted:
 
 //Declaring code names
@@ -44,9 +65,7 @@ push.v [array]input_held
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-
 //Fix savedata:
-
 //Declaring and creating necessary variables for code-strings-functions-whatever (extra and ossafe) TODO: LocalsCount argument for each script?
 var ossafe_savedata_save = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_save") };
 var ossafe_savedata_load = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_load") };
@@ -173,15 +192,6 @@ Data.Strings.MakeString("subtitle");
 Data.Strings.MakeString("deltarune.sav");
 Data.Strings.MakeString("load in progress");
 Data.Strings.MakeString("save in progress");
-
-//Fix some collisions:
-Data.GameObjects.ByName("obj_solidlong").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
-.localvar 0 arguments
-00000: pushi.e 200
-00001: pop.v.i self.image_xscale
-00003: pushi.e 0
-00004: pop.v.i self.image_speed
-", Data.Functions, Data.Variables, Data.Strings));
 
 //Set osflavor to value 5, basically means it's the switch console (hot-fix to avoid future problems)
 Data.GameObjects.ByName("obj_time").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
