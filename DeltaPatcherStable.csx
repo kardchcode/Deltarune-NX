@@ -1,8 +1,8 @@
-// Fixes the inverted up and down directions, messes some collisions and... fixes tha saveprocess? v0.1
+// Fixes the controls and some collisions
 
 EnsureDataLoaded();
 
-ScriptMessage("DELTARUNE patcher for the Nintendo Switch\nv0.1");
+ScriptMessage("DELTARUNE patcher (stable version) for the Nintendo Switch\nv0.1");
 
 //Fix some collisions:
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
