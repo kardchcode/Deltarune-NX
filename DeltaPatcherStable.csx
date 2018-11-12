@@ -4,7 +4,7 @@ EnsureDataLoaded();
 
 ScriptMessage("DELTARUNE patcher (stable version) for the Nintendo Switch\nv0.1");
 
-//Fix some collisions:
+// Fix some collisions:
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
  InstanceID = Data.GeneralInfo.LastObj++,
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
@@ -25,14 +25,14 @@ Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameO
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
  X = -20, Y = 400, ScaleX = 70});
 
-//Fix left-stick up and down inverted:
-//Declaring code names
+// Fix left-stick up and down inverted:
+// Declaring code names
 var up_p = Data.Scripts.ByName("up_p")?.Code;
 var up_h = Data.Scripts.ByName("up_h")?.Code;
 var down_p = Data.Scripts.ByName("down_p")?.Code;
 var down_h = Data.Scripts.ByName("down_h")?.Code;
 
-//Up pressed
+// Up pressed
 up_p.Replace(Assembler.Assemble(@"
 pushi.e -5
 pushi.e 0
@@ -40,7 +40,7 @@ push.v [array]input_pressed
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Up held
+// Up held
 up_h.Replace(Assembler.Assemble(@"
 pushi.e -5
 pushi.e 0
@@ -48,7 +48,7 @@ push.v [array]input_held
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Down pressed
+// Down pressed
 down_p.Replace(Assembler.Assemble(@"
 pushi.e -5
 pushi.e 2
@@ -56,7 +56,7 @@ push.v [array]input_pressed
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Down held
+// Down held
 down_h.Replace(Assembler.Assemble(@"
 pushi.e -5
 pushi.e 2
@@ -64,7 +64,7 @@ push.v [array]input_held
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Fix the rest of the controls!
+// Fix the rest of the controls!
 Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushi.e 40
