@@ -4,7 +4,7 @@ EnsureDataLoaded();
 
 ScriptMessage("DELTARUNE patcher for the Nintendo Switch\nv0.1");
 
-//Fix the rest of the controlls!
+//Fix the rest of the controls!
 Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushi.e 40
