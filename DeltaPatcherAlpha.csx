@@ -1,10 +1,11 @@
-// Fixes the inverted up and down directions, messes some collisions and... fixes tha saveprocess? v0.1
-
+// Fixes the controls, some collisions and... fixes tha saveprocess? v0.1 (alpha)
+// Unstable version,use at your own risk
 EnsureDataLoaded();
 
-ScriptMessage("DELTARUNE patcher for the Nintendo Switch\nv0.1");
+ScriptMessage("DELTARUNE patcher (alpha) for the Nintendo Switch\nv0.1");
+ScriptMessage("ATTENTION: Unstable version of the script (use at your own risk)\nPlease if you are not a dev use the stable version (DeltaPatcherStable.csx)\nso the game it's at least playable");
 
-//Fix the rest of the controls!
+// Fix the rest of the controls!
 Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushi.e 40
@@ -89,7 +90,7 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 00098: pop.v.i [array]input_g
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Fix some collisions:
+// Fix some collisions:
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
  InstanceID = Data.GeneralInfo.LastObj++,
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
@@ -110,15 +111,15 @@ Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameO
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
  X = -20, Y = 400, ScaleX = 70});
 
-//Fix left-stick up and down inverted:
+// Fix left-stick up and down inverted:
 
-//Declaring code names
+// Declaring code names
 var up_p = Data.Scripts.ByName("up_p")?.Code;
 var up_h = Data.Scripts.ByName("up_h")?.Code;
 var down_p = Data.Scripts.ByName("down_p")?.Code;
 var down_h = Data.Scripts.ByName("down_h")?.Code;
 
-//Up pressed
+// Up pressed
 up_p.Replace(Assembler.Assemble(@"
 pushi.e -5
 pushi.e 0
@@ -126,7 +127,7 @@ push.v [array]input_pressed
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Up held
+// Up held
 up_h.Replace(Assembler.Assemble(@"
 pushi.e -5
 pushi.e 0
@@ -134,7 +135,7 @@ push.v [array]input_held
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Down pressed
+// Down pressed
 down_p.Replace(Assembler.Assemble(@"
 pushi.e -5
 pushi.e 2
@@ -142,7 +143,7 @@ push.v [array]input_pressed
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Down held
+// Down held
 down_h.Replace(Assembler.Assemble(@"
 pushi.e -5
 pushi.e 2
@@ -150,8 +151,8 @@ push.v [array]input_held
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Fix savedata:
-//Declaring and creating necessary variables for code-strings-functions-whatever (extra and ossafe) TODO: LocalsCount argument for each script?
+// Fix savedata, or at least try to fix it...
+// Declaring and creating necessary variables for code-strings-functions-whatever (extra and ossafe) TODO: LocalsCount argument for each script?
 var ossafe_savedata_save = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_save") };
 var ossafe_savedata_load = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_load") };
 var ossafe_ini_open = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_ini_open") };
@@ -173,7 +174,7 @@ var ossafe_file_delete = new UndertaleCode() { Name = Data.Strings.MakeString("g
 var substr = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_substr") };
 var strlen = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_strlen") };
 
-//Ensure the missing GLOBAL variables
+// Ensure the missing GLOBAL variables
 Data.Variables.EnsureDefined("osflavor", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("savedata_async_id", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("switchlogin", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);  //Not necessary yet...
@@ -183,7 +184,7 @@ Data.Variables.EnsureDefined("savedata_async_load", UndertaleInstruction.Instanc
 Data.Variables.EnsureDefined("savedata_debuginfo", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("current_ini", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 
-//Ensure the misssing SELF variable TODO: these shouldn't pop an error w/o declaring them...
+// Ensure the misssing SELF variable TODO: these shouldn't pop an error w/o declaring them...
 Data.Variables.EnsureDefined("undefined", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("itemat", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("itemdf", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
@@ -194,13 +195,13 @@ Data.Variables.EnsureDefined("itemgrazesize", UndertaleInstruction.InstanceType.
 Data.Variables.EnsureDefined("itemboltspeed", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("itemspecial", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 
-//Side note, some scripts, functions and variables get cloned because of this
+// Side note, some scripts, functions and variables get cloned because of this
 Data.Variables.EnsureDefined("os_type", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("text", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("lines", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("handle", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 
-//Define some LOCAL variables (divided for each script)
+// Define some LOCAL variables (divided for each script)
 var var_json = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "json", Data.Strings, Data)); //ossafe_savedata_save
 
 var var_name = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "name", Data.Strings, Data)); //ossafe_ini_open
@@ -247,7 +248,7 @@ var var_str = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "str", Data.S
 var var_pos = Data.Variables.IndexOf(Data.Variables.DefineLocal(2, "pos", Data.Strings, Data));
 var var_len = Data.Variables.IndexOf(Data.Variables.DefineLocal(3, "len", Data.Strings, Data));
 
-//Ensure the missing functions TODO: define scripts for this functions?
+// Ensure the missing functions TODO: define scripts for this functions?
 Data.Functions.EnsureDefined("buffer_async_group_begin", Data.Strings);
 Data.Functions.EnsureDefined("buffer_async_group_option", Data.Strings);
 Data.Functions.EnsureDefined("buffer_create", Data.Strings);
@@ -265,7 +266,7 @@ Data.Functions.EnsureDefined("json_encode", Data.Strings);
 Data.Functions.EnsureDefined("is_undefined", Data.Strings);
 Data.Functions.EnsureDefined("ini_open_from_string", Data.Strings);
 
-//Quick hot-fix for this specific undeclared string
+// Quick hot-fix for this specific undeclared string
 Data.Strings.MakeString("is_write");
 Data.Strings.MakeString("line_read");
 Data.Strings.MakeString("Deltarune");
@@ -278,7 +279,7 @@ Data.Strings.MakeString("deltarune.sav");
 Data.Strings.MakeString("load in progress");
 Data.Strings.MakeString("save in progress");
 
-//Set osflavor to value 5, basically means it's the switch console (hot-fix to avoid future problems)
+// Set osflavor to value 5, basically means it's the switch console (hot-fix to avoid future problems)
 Data.GameObjects.ByName("obj_time").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushi.e 5
@@ -389,7 +390,7 @@ Data.GameObjects.ByName("obj_time").EventHandlerFor(EventType.Create, Data.Strin
 00151: b 00119
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//Extra scripts for ossafe
+// Extra scripts for ossafe
 strlen.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushvar.v self.argument0
@@ -460,7 +461,7 @@ Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = substr.Name });
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("substr"), Code = substr });
 Data.Functions.EnsureDefined("substr", Data.Strings);
 
-//Saves savedata(ofc)
+// Saves savedata(ofc)
 ossafe_savedata_save.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 .localvar 1 json " + var_json + @"
@@ -544,7 +545,7 @@ Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = ossafe_savedata_save.Name
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("ossafe_savedata_save"), Code = ossafe_savedata_save });
 Data.Functions.EnsureDefined("ossafe_savedata_save", Data.Strings);
 
-//Loads savedata
+// Loads savedata
 ossafe_savedata_load.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushglb.v global.osflavor
