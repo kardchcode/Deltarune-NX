@@ -67,7 +67,7 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 00071: pushi.e -5
 00072: pushi.e 4
 00073: pop.v.i [array]input_g
-00075: pushi.e 1 //TODO, change strings from press x to close to press b
+00075: pushi.e 1
 00076: pushi.e -5
 00077: pushi.e 5
 00078: pop.v.i [array]input_g
