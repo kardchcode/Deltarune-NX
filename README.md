@@ -1,5 +1,5 @@
-# Deltarune-switch
-Patches Deltarune to be playable on the NintendoSwitch
+# Deltarune-NX
+Patches Deltarune to be playable on the Nintendo Switch
 
 ## Patching Deltarune
 >- You will first need this tool https://github.com/krzys-h/UndertaleModTool
