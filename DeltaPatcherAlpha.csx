@@ -6,28 +6,63 @@ ScriptMessage("DELTARUNE patcher (alpha) for the Nintendo Switch\nv0.6 (alpha)")
 ScriptMessage("ATTENTION: Unstable version of the script\n(Stable version of the script is recommended)");
 
 //STABLE Script
-Data.GameObjects.ByName("obj_savepoint").Solid = true;
-Data.GameObjects.ByName("obj_interactablesolid").Solid = true;
+//Fix the collision problems in the rest of interactable objects in the game? HOTFIX
+Data.GameObjects.ByName("obj_interactablesolid").ParentId = Data.GameObjects.ByName("obj_interactable");
 
+//Fix some collisions: TODO: properlly fix the solid long collisions being ignored
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
  InstanceID = Data.GeneralInfo.LastObj++,
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
  X = 55, Y = 165, ScaleX = 21 });
 
- Data.Rooms.ByName("room_torhouse").GameObjects.Add(new UndertaleRoom.GameObject(){   
+Data.Rooms.ByName("room_torhouse").GameObjects.Add(new UndertaleRoom.GameObject(){   
  InstanceID = Data.GeneralInfo.LastObj++,
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
  X = 76, Y = 200, ScaleX = 28 });
 
- Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
+Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
  InstanceID = Data.GeneralInfo.LastObj++,
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
  X = -20, Y = 300, ScaleX = 70 });
 
- Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
+Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
  InstanceID = Data.GeneralInfo.LastObj++,
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
  X = -20, Y = 400, ScaleX = 70 });
+ 
+//Fix left-stick up and down inverted:
+
+//Up pressed
+Data.Scripts.ByName("up_p")?.Code.Replace(Assembler.Assemble(@"
+pushi.e -5
+pushi.e 0
+push.v [array]input_pressed
+ret.v
+", Data.Functions, Data.Variables, Data.Strings));
+
+//Up held
+Data.Scripts.ByName("up_h")?.Code.Replace(Assembler.Assemble(@"
+pushi.e -5
+pushi.e 0
+push.v [array]input_held
+ret.v
+", Data.Functions, Data.Variables, Data.Strings));
+
+//Down pressed
+Data.Scripts.ByName("down_p")?.Code.Replace(Assembler.Assemble(@"
+pushi.e -5
+pushi.e 2
+push.v [array]input_pressed
+ret.v
+", Data.Functions, Data.Variables, Data.Strings));
+
+//Down held
+Data.Scripts.ByName("down_h")?.Code.Replace(Assembler.Assemble(@"
+pushi.e -5
+pushi.e 2
+push.v [array]input_held
+ret.v
+", Data.Functions, Data.Variables, Data.Strings));
 
  Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 .localvar 0 arguments
