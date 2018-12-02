@@ -3,8 +3,8 @@
 EnsureDataLoaded();
 ScriptMessage("DELTARUNE patcher (stable version) for the Nintendo Switch\nv0.2");
 
-//Fix the collision problems in the rest of interactable objects in the game? HOTFIX
-Data.GameObjects.ByName("obj_interactablesolid").ParentId = Data.GameObjects.ByName("obj_interactable");
+//Fix the collision problems in the rest of interactable objects, HOTFIX, TODO: Fix it properly (c'mon freak)
+Data.GameObjects.ByName("obj_interactablesolid").ParentId = Data.GameObjects.ByName("obj_solidlong");
 
 //Fix some collisions: TODO: properlly fix the solid long collisions being ignored
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
