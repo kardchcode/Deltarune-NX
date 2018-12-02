@@ -6,6 +6,10 @@ ScriptMessage("DELTARUNE patcher (stable version) for the Nintendo Switch\nv0.2"
 //Fix savepoint stuck
 Data.GameObjects.ByName("obj_savepoint").Solid = true;
 
+//Fix the collision problems in the rest of interactable objects in the game?
+Data.GameObjects.ByName("obj_interactablesolid").Solid = true;
+//Untested, omg I'm expecting a lot of places in the game being extremelly bugged, quick hotfix
+
 //Fix some collisions:
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
  InstanceID = Data.GeneralInfo.LastObj++,
@@ -27,41 +31,7 @@ Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameO
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
  X = -20, Y = 400, ScaleX = 70 });
 
-//Fix left-stick up and down inverted:
-//TODO: actually this is not really needed since you can change it in the controls like below, I will fix this later
-//Up pressed
-Data.Scripts.ByName("up_p")?.Code.Replace(Assembler.Assemble(@"
-pushi.e -5
-pushi.e 0
-push.v [array]input_pressed
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-//Up held
-Data.Scripts.ByName("up_h")?.Code.Replace(Assembler.Assemble(@"
-pushi.e -5
-pushi.e 0
-push.v [array]input_held
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-//Down pressed
-Data.Scripts.ByName("down_p")?.Code.Replace(Assembler.Assemble(@"
-pushi.e -5
-pushi.e 2
-push.v [array]input_pressed
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-//Down held
-Data.Scripts.ByName("down_h")?.Code.Replace(Assembler.Assemble(@"
-pushi.e -5
-pushi.e 2
-push.v [array]input_held
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-//Fix the rest of the controls!
+//Fix all the controls!
 Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushi.e 40
@@ -104,7 +74,7 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 00046: pushi.e -5
 00047: pushi.e 9
 00048: pop.v.i [array]input_k
-00050: pushi.e 14
+00050: pushi.e 15
 00051: pushi.e -5
 00052: pushi.e 0
 00053: pop.v.i [array]input_g
@@ -112,7 +82,7 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 00056: pushi.e -5
 00057: pushi.e 1
 00058: pop.v.i [array]input_g
-00060: pushi.e 15
+00060: pushi.e 14
 00061: pushi.e -5
 00062: pushi.e 2
 00063: pop.v.i [array]input_g
