@@ -6,8 +6,8 @@ ScriptMessage("DELTARUNE patcher (alpha) for the Nintendo Switch\nv0.6 (alpha)")
 ScriptMessage("ATTENTION: Unstable version of the script\n(Stable version of the script is recommended)");
 
 //STABLE Script
-//Fix the collision problems in the rest of interactable objects in the game? HOTFIX
-Data.GameObjects.ByName("obj_interactablesolid").ParentId = Data.GameObjects.ByName("obj_interactable");
+//Fix the collision problems in the rest of interactable objects, HOTFIX, TODO: Fix it properly (c'mon freak)
+Data.GameObjects.ByName("obj_interactablesolid").ParentId = Data.GameObjects.ByName("obj_solidlong");
 
 //Fix some collisions: TODO: properlly fix the solid long collisions being ignored
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
@@ -64,7 +64,8 @@ push.v [array]input_held
 ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
- Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
+//Fix the rest of the controls!
+Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushi.e 40
 00001: pushi.e -5
@@ -106,7 +107,7 @@ ret.v
 00046: pushi.e -5
 00047: pushi.e 9
 00048: pop.v.i [array]input_k
-00050: pushi.e 15
+00050: pushi.e 14
 00051: pushi.e -5
 00052: pushi.e 0
 00053: pop.v.i [array]input_g
@@ -114,7 +115,7 @@ ret.v
 00056: pushi.e -5
 00057: pushi.e 1
 00058: pop.v.i [array]input_g
-00060: pushi.e 14
+00060: pushi.e 15
 00061: pushi.e -5
 00062: pushi.e 2
 00063: pop.v.i [array]input_g
