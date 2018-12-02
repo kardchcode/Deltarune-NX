@@ -1,12 +1,35 @@
-// Fixes the controls, some collisions and... fixes tha saveprocess? v0.1 (alpha)
-// Unstable version,use at your own risk
+//DeltaPatcherAlpha, currently fucks up the game and lets it unplayable, also fixes the controls, some collisions and... fixes tha saveprocess? v0.2 (alpha)
+//Unstable version, use at your own risk
 EnsureDataLoaded();
 
-ScriptMessage("DELTARUNE patcher (alpha) for the Nintendo Switch\nv0.1");
-ScriptMessage("ATTENTION: Unstable version of the script (use at your own risk)\nPlease if you are not a dev use the stable version (DeltaPatcherStable.csx)\nso the game it's at least playable");
+ScriptMessage("DELTARUNE patcher (alpha) for the Nintendo Switch\nv0.6 (alpha)");
+ScriptMessage("ATTENTION: Unstable version of the script\n(Stable version of the script is recommended)");
 
-// Fix the rest of the controls!
-Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
+//STABLE Script
+Data.GameObjects.ByName("obj_savepoint").Solid = true;
+Data.GameObjects.ByName("obj_interactablesolid").Solid = true;
+
+Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
+ InstanceID = Data.GeneralInfo.LastObj++,
+ ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
+ X = 55, Y = 165, ScaleX = 21 });
+
+ Data.Rooms.ByName("room_torhouse").GameObjects.Add(new UndertaleRoom.GameObject(){   
+ InstanceID = Data.GeneralInfo.LastObj++,
+ ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
+ X = 76, Y = 200, ScaleX = 28 });
+
+ Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
+ InstanceID = Data.GeneralInfo.LastObj++,
+ ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
+ X = -20, Y = 300, ScaleX = 70 });
+
+ Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
+ InstanceID = Data.GeneralInfo.LastObj++,
+ ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
+ X = -20, Y = 400, ScaleX = 70 });
+
+ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushi.e 40
 00001: pushi.e -5
@@ -48,7 +71,7 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 00046: pushi.e -5
 00047: pushi.e 9
 00048: pop.v.i [array]input_k
-00050: pushi.e 14
+00050: pushi.e 15
 00051: pushi.e -5
 00052: pushi.e 0
 00053: pop.v.i [array]input_g
@@ -56,7 +79,7 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 00056: pushi.e -5
 00057: pushi.e 1
 00058: pop.v.i [array]input_g
-00060: pushi.e 15
+00060: pushi.e 14
 00061: pushi.e -5
 00062: pushi.e 2
 00063: pop.v.i [array]input_g
@@ -68,7 +91,7 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 00071: pushi.e -5
 00072: pushi.e 4
 00073: pop.v.i [array]input_g
-00075: pushi.e 1
+00075: pushi.e 1 
 00076: pushi.e -5
 00077: pushi.e 5
 00078: pop.v.i [array]input_g
@@ -89,69 +112,12 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 00097: pushi.e 9
 00098: pop.v.i [array]input_g
 ", Data.Functions, Data.Variables, Data.Strings));
+//End of the STABLE part
 
-// Fix some collisions:
-Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
- InstanceID = Data.GeneralInfo.LastObj++,
- ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
- X = 55, Y = 165, ScaleX = 21});
 
-Data.Rooms.ByName("room_torhouse").GameObjects.Add(new UndertaleRoom.GameObject(){   
- InstanceID = Data.GeneralInfo.LastObj++,
- ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
- X = 76, Y = 200, ScaleX = 28});
 
-Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
- InstanceID = Data.GeneralInfo.LastObj++,
- ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
- X = -20, Y = 300, ScaleX = 70});
-
-Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameObject(){  
- InstanceID = Data.GeneralInfo.LastObj++,
- ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
- X = -20, Y = 400, ScaleX = 70});
-
-// Fix left-stick up and down inverted:
-
-// Declaring code names
-var up_p = Data.Scripts.ByName("up_p")?.Code;
-var up_h = Data.Scripts.ByName("up_h")?.Code;
-var down_p = Data.Scripts.ByName("down_p")?.Code;
-var down_h = Data.Scripts.ByName("down_h")?.Code;
-
-// Up pressed
-up_p.Replace(Assembler.Assemble(@"
-pushi.e -5
-pushi.e 0
-push.v [array]input_pressed
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-// Up held
-up_h.Replace(Assembler.Assemble(@"
-pushi.e -5
-pushi.e 0
-push.v [array]input_held
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-// Down pressed
-down_p.Replace(Assembler.Assemble(@"
-pushi.e -5
-pushi.e 2
-push.v [array]input_pressed
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-// Down held
-down_h.Replace(Assembler.Assemble(@"
-pushi.e -5
-pushi.e 2
-push.v [array]input_held
-ret.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-// Fix savedata, or at least try to fix it...
+//ALPHA Script
+// Fix savedata, or at least try to fix it... 
 // Declaring and creating necessary variables for code-strings-functions-whatever (extra and ossafe) TODO: LocalsCount argument for each script?
 var ossafe_savedata_save = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_save") };
 var ossafe_savedata_load = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_load") };
@@ -2313,5 +2279,224 @@ scr_saveprocess_ut.Replace(Assembler.Assemble(@"
 00349: call.i ossafe_file_text_close(argc=1)
 00351: popz.v
 ", Data.Functions, Data.Variables, Data.Strings));
+
+//gml_Object_DEVICE_MENU_Other_15.gml
+Data.GameObjects.ByName("DEVICE_MENU").EventHandlerFor(EventType.Other, 15, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
+.localvar 0 arguments
+00000: push.s ""dr.ini""@2744
+00002: conv.s.v
+00003: call.i ossafe_ini_open(argc=1)
+00005: pop.v.v self.iniwrite
+00007: push.s ""------""@3511
+00009: conv.s.v
+00010: push.s ""Name""@2747
+00012: conv.s.v
+00013: push.s ""G""@2534
+00015: pushi.e -1
+00016: pushi.e 2
+00017: push.v [array]MENUCOORD
+00019: call.i string(argc=1)
+00021: add.v.s
+00022: call.i ini_read_string(argc=3)
+00024: pop.v.v self._NEWNAME
+00026: pushi.e 0
+00027: conv.i.v
+00028: push.s ""Time""@2752
+00030: conv.s.v
+00031: push.s ""G""@2534
+00033: pushi.e -1
+00034: pushi.e 2
+00035: push.v [array]MENUCOORD
+00037: call.i string(argc=1)
+00039: add.v.s
+00040: call.i ini_read_real(argc=3)
+00042: pop.v.v self._NEWTIME
+00044: pushi.e 0
+00045: conv.i.v
+00046: push.s ""Room""@2753
+00048: conv.s.v
+00049: push.s ""G""@2534
+00051: pushi.e -1
+00052: pushi.e 2
+00053: push.v [array]MENUCOORD
+00055: call.i string(argc=1)
+00057: add.v.s
+00058: call.i ini_read_real(argc=3)
+00060: pop.v.v self._NEWROOM
+00062: pushi.e 0
+00063: conv.i.v
+00064: push.s ""Level""@2749
+00066: conv.s.v
+00067: push.s ""G""@2534
+00069: pushi.e -1
+00070: pushi.e 2
+00071: push.v [array]MENUCOORD
+00073: call.i string(argc=1)
+00075: add.v.s
+00076: call.i ini_read_real(argc=3)
+00078: pop.v.v self._NEWLEVEL
+00080: push.v self._NEWNAME
+00082: push.s ""Name""@2747
+00084: conv.s.v
+00085: push.s ""G""@2534
+00087: pushi.e -1
+00088: pushi.e 3
+00089: push.v [array]MENUCOORD
+00091: call.i string(argc=1)
+00093: add.v.s
+00094: call.i ini_write_string(argc=3)
+00096: popz.v
+00097: push.v self._NEWTIME
+00099: push.s ""Time""@2752
+00101: conv.s.v
+00102: push.s ""G""@2534
+00104: pushi.e -1
+00105: pushi.e 3
+00106: push.v [array]MENUCOORD
+00108: call.i string(argc=1)
+00110: add.v.s
+00111: call.i ini_write_real(argc=3)
+00113: popz.v
+00114: push.v self._NEWROOM
+00116: push.s ""Room""@2753
+00118: conv.s.v
+00119: push.s ""G""@2534
+00121: pushi.e -1
+00122: pushi.e 3
+00123: push.v [array]MENUCOORD
+00125: call.i string(argc=1)
+00127: add.v.s
+00128: call.i ini_write_real(argc=3)
+00130: popz.v
+00131: push.v self._NEWLEVEL
+00133: push.s ""Level""@2749
+00135: conv.s.v
+00136: push.s ""G""@2534
+00138: pushi.e -1
+00139: pushi.e 3
+00140: push.v [array]MENUCOORD
+00142: call.i string(argc=1)
+00144: add.v.s
+00145: call.i ini_write_real(argc=3)
+00147: popz.v
+00148: call.i ossafe_ini_close(argc=0)
+00150: popz.v
+00151: pushi.e 1
+00152: pushi.e -1
+00153: pushi.e -1
+00154: pushi.e 3
+00155: push.v [array]MENUCOORD
+00157: conv.v.i
+00158: pop.v.i [array]FILE
+00160: pushi.e -1
+00161: pushi.e -1
+00162: pushi.e 2
+00163: push.v [array]MENUCOORD
+00165: conv.v.i
+00166: push.v [array]PLACE
+00168: pushi.e -1
+00169: pushi.e -1
+00170: pushi.e 3
+00171: push.v [array]MENUCOORD
+00173: conv.v.i
+00174: pop.v.v [array]PLACE
+00176: pushi.e -1
+00177: pushi.e -1
+00178: pushi.e 2
+00179: push.v [array]MENUCOORD
+00181: conv.v.i
+00182: push.v [array]TIME
+00184: pushi.e -1
+00185: pushi.e -1
+00186: pushi.e 3
+00187: push.v [array]MENUCOORD
+00189: conv.v.i
+00190: pop.v.v [array]TIME
+00192: pushi.e -1
+00193: pushi.e -1
+00194: pushi.e 2
+00195: push.v [array]MENUCOORD
+00197: conv.v.i
+00198: push.v [array]NAME
+00200: pushi.e -1
+00201: pushi.e -1
+00202: pushi.e 3
+00203: push.v [array]MENUCOORD
+00205: conv.v.i
+00206: pop.v.v [array]NAME
+00208: pushi.e -1
+00209: pushi.e -1
+00210: pushi.e 2
+00211: push.v [array]MENUCOORD
+00213: conv.v.i
+00214: push.v [array]LEVEL
+00216: pushi.e -1
+00217: pushi.e -1
+00218: pushi.e 3
+00219: push.v [array]MENUCOORD
+00221: conv.v.i
+00222: pop.v.v [array]LEVEL
+00224: pushi.e -1
+00225: pushi.e -1
+00226: pushi.e 2
+00227: push.v [array]MENUCOORD
+00229: conv.v.i
+00230: push.v [array]TIME_STRING
+00232: pushi.e -1
+00233: pushi.e -1
+00234: pushi.e 3
+00235: push.v [array]MENUCOORD
+00237: conv.v.i
+00238: pop.v.v [array]TIME_STRING
+00240: push.s ""filech1_""@2713
+00242: pushi.e -1
+00243: pushi.e 3
+00244: push.v [array]MENUCOORD
+00246: call.i string(argc=1)
+00248: add.v.s
+00249: push.s ""filech1_""@2713
+00251: pushi.e -1
+00252: pushi.e 2
+00253: push.v [array]MENUCOORD
+00255: call.i string(argc=1)
+00257: add.v.s
+00258: call.i file_copy(argc=2)
+00260: popz.v
+00261: push.s ""config_""@7035
+00263: pushi.e -1
+00264: pushi.e 2
+00265: push.v [array]MENUCOORD
+00267: call.i string(argc=1)
+00269: add.v.s
+00270: push.s "".ini""@7036
+00272: add.s.v
+00273: call.i ossafe_file_exists(argc=1)
+00275: conv.v.b
+00276: bf func_end
+00277: push.s ""config_""@7035
+00279: pushi.e -1
+00280: pushi.e 3
+00281: push.v [array]MENUCOORD
+00283: call.i string(argc=1)
+00285: add.v.s
+00286: push.s "".ini""@7036
+00288: add.s.v
+00289: push.s ""config_""@7035
+00291: pushi.e -1
+00292: pushi.e 2
+00293: push.v [array]MENUCOORD
+00295: call.i string(argc=1)
+00297: add.v.s
+00298: push.s "".ini""@7036
+00300: add.s.v
+00301: call.i file_copy(argc=2)
+00303: popz.v
+", Data.Functions, Data.Variables, Data.Strings)); //TODO: create file_copy ossafe implementation, from zero, since there isn't a reference script in undertale D:
+
+//gml_Object_DEVICE_MENU_Other_15.gml
+/*Data.GameObjects.ByName("DEVICE_MENU").EventHandlerFor(EventType.Other, 15, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
+", Data.Functions, Data.Variables, Data.Strings));
+*/
+//End of the ALPHA part
 
 ScriptMessage("Patched!");
