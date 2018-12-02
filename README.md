@@ -3,7 +3,7 @@ Patches Deltarune to be playable on the Nintendo Switch.
 
 The stable version of the script (DeltaPatcherStable.csx) currently fixes collisions and controls.
 
-The unstable version of the script (DeltaPatcherAlpha.csx) currently fucks up the game, but the main proposite id to fix the saveprocess so that it actually saves something, it's a... huh, work in progress.
+The unstable version of the script (DeltaPatcherAlpha.csx) currently fucks up the game, but the main proposite is to fix the saveprocess so that it actually saves something, it's a... huh, work in progress.
 
 ## Patching Deltarune
 >- You will first need this tool https://github.com/krzys-h/UndertaleModTool
