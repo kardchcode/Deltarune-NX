@@ -1,15 +1,14 @@
-//DeltaPatcherAlpha, currently fucks up the game and lets it unplayable, also fixes the controls, some collisions and... fixes tha saveprocess? v0.2 (alpha)
+//DeltaPatcherAlpha, currently fucks up the game and lets it unplayable, also fixes the controls, some collisions and... fixes tha saveprocess?
 //Unstable version, use at your own risk
 EnsureDataLoaded();
 
-ScriptMessage("DELTARUNE patcher (alpha) for the Nintendo Switch\nv0.7 (alpha)");
-ScriptMessage("ATTENTION: Unstable version of the script\n(Stable version of the script is recommended)");
+ScriptMessage("DELTARUNE patcher (alpha) for the Nintendo Switch\nv0.6 (alpha)");
 
 //STABLE Script
 //Fix the collision problems in the rest of interactable objects, HOTFIX, TODO: Fix it properly (c'mon freak)
 Data.GameObjects.ByName("obj_interactablesolid").ParentId = Data.GameObjects.ByName("obj_solidlong");
 
-//Fix some collisions: TODO: properlly fix the solid long collisions being ignored
+//Fix some collisions: TODO: properly fix the solid long collisions being ignored
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
  InstanceID = Data.GeneralInfo.LastObj++,
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
@@ -151,7 +150,6 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 //End of the STABLE part
 
 
-
 //ALPHA Script
 // Fix savedata, or at least try to fix it... 
 // Declaring and creating necessary variables for code-strings-functions-whatever (extra and ossafe) 
@@ -160,7 +158,7 @@ var ossafe_savedata_load = new UndertaleCode() { Name = Data.Strings.MakeString(
 var ossafe_ini_open = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_ini_open") };
 var ossafe_ini_close = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_ini_close") };
 var ossafe_game_end = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_game_end") };
-var ossafe_fill_rectangle = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_fill_rectangle") };  //TODO: Remove the fill rectangle thing
+var ossafe_fill_rectangle = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_fill_rectangle") };  //TODO: Remove the fill rectangle thingy
 var ossafe_file_text_writeln = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_text_writeln") };
 var ossafe_file_text_write_string = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_text_write_string") };
 var ossafe_file_text_write_real = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_text_write_real") };
@@ -186,7 +184,7 @@ Data.Variables.EnsureDefined("savedata_async_load", UndertaleInstruction.Instanc
 Data.Variables.EnsureDefined("savedata_debuginfo", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("current_ini", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 
-// Ensure the misssing SELF variables TODO: these shouldn't pop an error w/o declaring them...?
+// Ensure the misssing SELF variables
 Data.Variables.EnsureDefined("undefined", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("itemat", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("itemdf", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
@@ -197,7 +195,7 @@ Data.Variables.EnsureDefined("itemgrazesize", UndertaleInstruction.InstanceType.
 Data.Variables.EnsureDefined("itemboltspeed", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("itemspecial", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 
-// Side note, some scripts, functions and variables get cloned because of this
+//Ensure the missing variables
 Data.Variables.EnsureDefined("os_type", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("text", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("lines", UndertaleInstruction.InstanceType.Self, false, Data.Strings, Data);
@@ -268,18 +266,19 @@ Data.Functions.EnsureDefined("json_encode", Data.Strings);
 Data.Functions.EnsureDefined("is_undefined", Data.Strings);
 Data.Functions.EnsureDefined("ini_open_from_string", Data.Strings);
 
-// Quick hot-fix for this specific undeclared string
+// Quick hot-fix for this specific undeclared strings
 Data.Strings.MakeString("is_write");
 Data.Strings.MakeString("line_read");
 Data.Strings.MakeString("Deltarune");
 Data.Strings.MakeString("showdialog");
 Data.Strings.MakeString("savepadindex");
-Data.Strings.MakeString("slottitle");
-Data.Strings.MakeString("Deltarune Save Data"); 
-Data.Strings.MakeString("subtitle");
-Data.Strings.MakeString("deltarune.sav");
-Data.Strings.MakeString("load in progress");
-Data.Strings.MakeString("save in progress");
+Data.Strings.MakeString("slottitle"); //13220
+Data.Strings.MakeString("Deltarune Save Data"); //13220
+Data.Strings.MakeString("subtitle"); //13221
+Data.Strings.MakeString("deltarune.sav"); //13222
+Data.Strings.MakeString("load in progress"); //13223
+Data.Strings.MakeString("save in progress");//13224
+Data.Strings.MakeString("someargument"); //13225
 
 // Set osflavor to value 5, basically means it's the switch console (hot-fix to avoid future problems)
 Data.GameObjects.ByName("obj_time").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
@@ -454,7 +453,7 @@ substr.Append(Assembler.Assemble(@"
 00062: call.i string_copy(argc=3)
 00064: ret.v
 00065: b func_end
-00066: push.s ""argument1""@36
+00066: push.s """"@13225
 00068: conv.s.v
 00069: ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
@@ -462,6 +461,7 @@ Data.Code.Add(substr);
 Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = substr.Name });
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("substr"), Code = substr });
 Data.Functions.EnsureDefined("substr", Data.Strings);
+//TODO: add the other functions code left (buffer_async_begin...) (double TODO heh)
 
 // Saves savedata(ofc)
 ossafe_savedata_save.Append(Assembler.Assemble(@"
@@ -639,7 +639,7 @@ ossafe_ini_open.Append(Assembler.Assemble(@"
 00031: call.i is_undefined(argc=1)
 00033: conv.v.b
 00034: bf 00040
-00035: push.s ""argument1""@36
+00035: push.s """"@13225
 00037: pop.v.s local.data
 00039: b 00044
 00040: pushloc.v local.file
@@ -699,7 +699,7 @@ Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = ossafe_game_end.Name });
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("ossafe_game_end"), Code = ossafe_game_end });
 Data.Functions.EnsureDefined("ossafe_game_end", Data.Strings);
 
-//Fills ands draws rectangles?
+//Fills ands draws rectangles? I'm leaving this here because I will try to add borders here as well ;D
 ossafe_fill_rectangle.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 .localvar 1 x1 " + var_x1 + @"
@@ -903,7 +903,7 @@ ossafe_file_text_readln.Append(Assembler.Assemble(@"
 00050: call.i ds_map_find_value(argc=2)
 00052: cmp.v.v GTE
 00053: bf 00058
-00054: push.s ""argument1""@36
+00054: push.s """"@13225
 00056: conv.s.v
 00057: ret.v
 00058: push.s ""text""@13186
@@ -945,7 +945,7 @@ ossafe_file_text_read_string.Append(Assembler.Assemble(@"
 00020: call.i ds_map_find_value(argc=2)
 00022: conv.v.b
 00023: bf 00028
-00024: push.s ""argument1""@36
+00024: push.s """"@13225
 00026: conv.s.v
 00027: ret.v
 00028: push.s ""line""@9883
@@ -960,7 +960,7 @@ ossafe_file_text_read_string.Append(Assembler.Assemble(@"
 00044: call.i ds_map_find_value(argc=2)
 00046: cmp.v.v GTE
 00047: bf 00052
-00048: push.s ""argument1""@36
+00048: push.s """"@13225
 00050: conv.s.v
 00051: ret.v
 00052: pushi.e 1
@@ -1077,7 +1077,7 @@ ossafe_file_text_open_write.Append(Assembler.Assemble(@"
 00032: pushloc.v local.handle
 00034: call.i ds_map_set(argc=3)
 00036: popz.v
-00037: push.s ""argument1""@36
+00037: push.s """"@13225
 00039: conv.s.v
 00040: push.s ""data""@13189
 00042: conv.s.v
@@ -1105,146 +1105,146 @@ ossafe_file_text_open_read.Append(Assembler.Assemble(@"
 .localvar 8 lines " + var_lines1 + @"
 00000: pushi.e 5
 00001: pop.v.i global.osflavor
-00002: pushglb.v global.osflavor
-00003: pushi.e 2
-00004: cmp.i.v LTE
-00005: bf 00011
-00006: pushvar.v self.argument0
-00008: call.i file_text_open_read(argc=1)
-00009: ret.v
-00010: b func_end
-00011: pushvar.v self.argument0
-00013: call.i string_lower(argc=1)
-00015: pop.v.v local.name
-00017: pushloc.v local.name
-00019: pushglb.v global.savedata
-00021: call.i ds_map_find_value(argc=2)
-00023: pop.v.v local.file
-00025: pushloc.v local.file
-00027: call.i is_undefined(argc=1)
-00029: conv.v.b
-00030: bf 00034
-00031: pushvar.v self.undefined
-00033: ret.v
-00034: pushloc.v local.file
-00036: pop.v.v local.data
-00038: pushi.e 0
-00039: pop.v.i local.num_lines
-00041: pushloc.v local.data
-00043: call.i string_byte_length(argc=1)
-00045: pushi.e 0
-00046: cmp.i.v GT
-00047: bf 00159
-00048: pushloc.v local.data
-00050: push.s ""string_byte_length""@13210
-00052: conv.s.v
-00053: call.i string_pos(argc=2)
-00055: pop.v.v local.newline_pos
-00057: pushloc.v local.newline_pos
-00059: pushi.e 0
-00060: cmp.i.v GT
-00061: bf 00137
-00062: pushloc.v local.newline_pos
-00064: pushi.e 1
-00065: add.i.v
-00066: pop.v.v local.nextline_pos
-00068: pushloc.v local.newline_pos
-00070: pushi.e 1
-00071: cmp.i.v GT
-00072: bf 00085
-00073: pushloc.v local.newline_pos
-00075: pushi.e 1
-00076: sub.i.v
-00077: pushloc.v local.data
-00079: call.i string_char_at(argc=2)
-00081: push.s ""ds_map_create""@3380
-00083: cmp.s.v EQ
-00084: b 00086
-00085: push.e 0
-00086: bf 00093
-00087: push.v local.newline_pos
-00089: push.e 1
-00090: sub.i.v
-00091: pop.v.v local.newline_pos
-00093: pushloc.v local.newline_pos
-00095: pushi.e 1
-00096: cmp.i.v GT
-00097: bf 00111
-00098: pushloc.v local.newline_pos
-00100: pushi.e 1
-00101: sub.i.v
-00102: pushi.e 1
-00103: conv.i.v
-00104: pushloc.v local.data
-00106: call.i substr(argc=3)
-00108: pop.v.v local.line
-00110: b 00115
-00111: push.s ""argument1""@36
-00113: pop.v.s local.line
-00115: pushloc.v local.nextline_pos
-00117: pushloc.v local.data
-00119: call.i strlen(argc=1)
-00121: cmp.v.v LTE
-00122: bf 00132
-00123: pushloc.v local.nextline_pos
-00125: pushloc.v local.data
-00127: call.i substr(argc=2)
-00129: pop.v.v local.data
-00131: b 00136
-00132: push.s ""argument1""@36
-00134: pop.v.s local.data
-00136: b 00145
-00137: pushloc.v local.data
-00139: pop.v.v local.line
-00141: push.s ""argument1""@36
-00143: pop.v.s local.data
-00145: pushloc.v local.line
-00147: pushi.e -7
-00148: push.v local.num_lines
-00150: dup.v 0
-00151: push.e 1
-00152: add.i.v
-00153: pop.v.v local.num_lines
-00155: conv.v.i
-00156: pop.v.v [array]lines
-00158: b 00041
-00159: call.i ds_map_create(argc=0)
-00161: pop.v.v self.handle
-00163: pushi.e 0
-00164: conv.i.v
-00165: push.s ""is_write""@13214
-00167: conv.s.v
-00168: push.v self.handle
-00170: call.i ds_map_set(argc=3)
-00172: popz.v
-00173: pushloc.v local.lines
-00175: push.s ""text""@13186
-00177: conv.s.v
-00178: push.v self.handle
-00180: call.i ds_map_set(argc=3)
-00182: popz.v
-00183: pushloc.v local.num_lines
-00185: push.s ""num_lines""@13195
-00187: conv.s.v
-00188: push.v self.handle
-00190: call.i ds_map_set(argc=3)
-00192: popz.v
-00193: pushi.e 0
-00194: conv.i.v
-00195: push.s ""line""@9883
-00197: conv.s.v
-00198: push.v self.handle
-00200: call.i ds_map_set(argc=3)
-00202: popz.v
-00203: pushi.e 0
-00204: conv.i.v
-00205: push.s ""line_read""@13215
-00207: conv.s.v
-00208: push.v self.handle
-00210: call.i ds_map_set(argc=3)
-00212: popz.v
-00213: push.v self.handle
-00215: ret.v
+00003: pushglb.v global.osflavor
+00005: pushi.e 2
+00006: cmp.i.v LTE
+00007: bf 00014
+00008: pushvar.v self.argument0
+00010: call.i file_text_open_read(argc=1)
+00012: ret.v
+00013: b func_end
+00014: pushvar.v self.argument0
+00016: call.i string_lower(argc=1)
+00018: pop.v.v local.name
+00020: pushloc.v local.name
+00022: pushglb.v global.savedata
+00024: call.i ds_map_find_value(argc=2)
+00026: pop.v.v local.file
+00028: pushloc.v local.file
+00030: call.i is_undefined(argc=1)
+00032: conv.v.b
+00033: bf 00037
+00034: pushvar.v self.undefined
+00036: ret.v
+00037: pushloc.v local.file
+00039: pop.v.v local.data
+00041: pushi.e 0
+00042: pop.v.i local.num_lines
+00044: pushloc.v local.data
+00046: call.i string_byte_length(argc=1)
+00048: pushi.e 0
+00049: cmp.i.v GT
+00050: bf 00162
+00051: pushloc.v local.data
+00053: push.s ""string_byte_length""@13210
+00055: conv.s.v
+00056: call.i string_pos(argc=2)
+00058: pop.v.v local.newline_pos
+00060: pushloc.v local.newline_pos
+00062: pushi.e 0
+00063: cmp.i.v GT
+00064: bf 00140
+00065: pushloc.v local.newline_pos
+00067: pushi.e 1
+00068: add.i.v
+00069: pop.v.v local.nextline_pos
+00071: pushloc.v local.newline_pos
+00073: pushi.e 1
+00074: cmp.i.v GT
+00075: bf 00088
+00076: pushloc.v local.newline_pos
+00078: pushi.e 1
+00079: sub.i.v
+00080: pushloc.v local.data
+00082: call.i string_char_at(argc=2)
+00084: push.s ""ds_map_create""@3380
+00086: cmp.s.v EQ
+00087: b 00089
+00088: push.e 0
+00089: bf 00096
+00090: push.v local.newline_pos
+00092: push.e 1
+00093: sub.i.v
+00094: pop.v.v local.newline_pos
+00096: pushloc.v local.newline_pos
+00098: pushi.e 1
+00099: cmp.i.v GT
+00100: bf 00114
+00101: pushloc.v local.newline_pos
+00103: pushi.e 1
+00104: sub.i.v
+00105: pushi.e 1
+00106: conv.i.v
+00107: pushloc.v local.data
+00109: call.i substr(argc=3)
+00111: pop.v.v local.line
+00113: b 00118
+00114: push.s """"@13225
+00116: pop.v.s local.line
+00118: pushloc.v local.nextline_pos
+00120: pushloc.v local.data
+00122: call.i strlen(argc=1)
+00124: cmp.v.v LTE
+00125: bf 00135
+00126: pushloc.v local.nextline_pos
+00128: pushloc.v local.data
+00130: call.i substr(argc=2)
+00132: pop.v.v local.data
+00134: b 00139
+00135: push.s """"@13225
+00137: pop.v.s local.data
+00139: b 00148
+00140: pushloc.v local.data
+00142: pop.v.v local.line
+00144: push.s """"@13225
+00146: pop.v.s local.data
+00148: pushloc.v local.line
+00150: pushi.e -7
+00151: push.v local.num_lines
+00153: dup.v 0
+00154: push.e 1
+00155: add.i.v
+00156: pop.v.v local.num_lines
+00158: conv.v.i
+00159: pop.v.v [array]lines
+00161: b 00044
+00162: call.i ds_map_create(argc=0)
+00164: pop.v.v self.handle
+00166: pushi.e 0
+00167: conv.i.v
+00168: push.s ""is_write""@13214
+00170: conv.s.v
+00171: push.v self.handle
+00173: call.i ds_map_set(argc=3)
+00175: popz.v
+00176: pushloc.v local.lines
+00178: push.s ""text""@13186
+00180: conv.s.v
+00181: push.v self.handle
+00183: call.i ds_map_set(argc=3)
+00185: popz.v
+00186: pushloc.v local.num_lines
+00188: push.s ""num_lines""@13195
+00190: conv.s.v
+00191: push.v self.handle
+00193: call.i ds_map_set(argc=3)
+00195: popz.v
+00196: pushi.e 0
+00197: conv.i.v
+00198: push.s ""line""@9883
+00200: conv.s.v
+00201: push.v self.handle
+00203: call.i ds_map_set(argc=3)
+00205: popz.v
+00206: pushi.e 0
+00207: conv.i.v
+00208: push.s ""line_read""@13215
+00210: conv.s.v
+00211: push.v self.handle
+00213: call.i ds_map_set(argc=3)
+00215: popz.v
+00216: push.v self.handle
+00218: ret.v
 ", Data.Functions, Data.Variables, Data.Strings));
 Data.Code.Add(ossafe_file_text_open_read);
 Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = ossafe_file_text_open_read.Name });
