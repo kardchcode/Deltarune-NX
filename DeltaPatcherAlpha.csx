@@ -1,4 +1,4 @@
-//DeltaPatcherAlpha, currently fucks up the game and lets it unplayable, also fixes the controls, some collisions and... fixes tha saveprocess?
+//DeltaPatcherAlpha, currently fucks up the game and lets it unplayable, also fixes the controls, the collisions and... fixes tha saveprocess?
 //Unstable version, use at your own risk
 EnsureDataLoaded();
 
@@ -151,14 +151,13 @@ Data.Scripts.ByName("scr_controls_default")?.Code.Replace(Assembler.Assemble(@"
 
 
 //ALPHA Script
-// Fix savedata, or at least try to fix it... 
 // Declaring and creating necessary variables for code-strings-functions-whatever (extra and ossafe) 
 var ossafe_savedata_save = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_save") };
 var ossafe_savedata_load = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_savedata_load") };
 var ossafe_ini_open = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_ini_open") };
 var ossafe_ini_close = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_ini_close") };
 var ossafe_game_end = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_game_end") };
-var ossafe_fill_rectangle = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_fill_rectangle") };  //TODO: Remove the fill rectangle thingy
+var ossafe_fill_rectangle = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_fill_rectangle") };  //TODO: Implement borders
 var ossafe_file_text_writeln = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_text_writeln") };
 var ossafe_file_text_write_string = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_text_write_string") };
 var ossafe_file_text_write_real = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_ossafe_file_text_write_real") };
@@ -177,7 +176,7 @@ var strlen = new UndertaleCode() { Name = Data.Strings.MakeString("gml_Script_st
 // Ensure the missing GLOBAL variables
 Data.Variables.EnsureDefined("osflavor", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("savedata_async_id", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
-Data.Variables.EnsureDefined("switchlogin", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);  //Not necessary yet...
+Data.Variables.EnsureDefined("switchlogin", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);  //Not necessary yet but ya now...
 Data.Variables.EnsureDefined("savedata", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("savedata_buffer", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
 Data.Variables.EnsureDefined("savedata_async_load", UndertaleInstruction.InstanceType.Global, false, Data.Strings, Data);
@@ -248,7 +247,7 @@ var var_str = Data.Variables.IndexOf(Data.Variables.DefineLocal(1, "str", Data.S
 var var_pos = Data.Variables.IndexOf(Data.Variables.DefineLocal(2, "pos", Data.Strings, Data));
 var var_len = Data.Variables.IndexOf(Data.Variables.DefineLocal(3, "len", Data.Strings, Data));
 
-// Ensure the missing functions TODO: define scripts for this functions, yeah it's probably going to crash if I don't define them
+// Ensure the missing functions TODO: define scripts for this functions?
 Data.Functions.EnsureDefined("buffer_async_group_begin", Data.Strings);
 Data.Functions.EnsureDefined("buffer_async_group_option", Data.Strings);
 Data.Functions.EnsureDefined("buffer_create", Data.Strings);
@@ -271,8 +270,8 @@ Data.Strings.MakeString("is_write");
 Data.Strings.MakeString("line_read");
 Data.Strings.MakeString("Deltarune");
 Data.Strings.MakeString("showdialog");
-Data.Strings.MakeString("savepadindex");
-Data.Strings.MakeString("slottitle"); //13220
+Data.Strings.MakeString("savepadindex"); 
+Data.Strings.MakeString("slottitle"); //13219
 Data.Strings.MakeString("Deltarune Save Data"); //13220
 Data.Strings.MakeString("subtitle"); //13221
 Data.Strings.MakeString("deltarune.sav"); //13222
@@ -280,118 +279,16 @@ Data.Strings.MakeString("load in progress"); //13223
 Data.Strings.MakeString("save in progress");//13224
 Data.Strings.MakeString("someargument"); //13225
 
-// Set osflavor to value 5, basically means it's the switch console (hot-fix to avoid future problems)
-Data.GameObjects.ByName("obj_time").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
-.localvar 0 arguments
-00000: pushi.e 5
-00001: pop.v.i global.osflavor
-00003: pushi.e 0
-00004: pop.v.i self.quit_timer
-00006: pushi.e 1
-00007: pop.v.i self.keyboard_active
-00009: pushi.e 1
-00010: pop.v.i self.gamepad_active
-00012: pushi.e 0
-00013: pop.v.i self.gamepad_check_timer
-00015: pushi.e 0
-00016: pop.v.i self.gamepad_id
-00018: push.d 0.4
-00021: pop.v.d self.axis_value
-00023: pushi.e 0
-00024: pop.v.i self.fullscreen_toggle
-00026: pushi.e 0
-00027: pop.v.i self.window_center_toggle
-00029: pushi.e 0
-00030: pop.v.i self.screenshot_number
-00032: pushi.e 320
-00033: conv.i.v
-00034: call.i instance_number(argc=1)
-00036: pushi.e 1
-00037: cmp.i.v GT
-00038: bf 00043
-00039: call.i instance_destroy(argc=0)
-00041: popz.v
-00042: b func_end
-00043: call.i display_get_height(argc=0)
-00045: pop.v.v self.display_height
-00047: call.i display_get_width(argc=0)
-00049: pop.v.v self.display_width
-00051: pushi.e 1
-00052: pop.v.i self.window_size_multiplier
-00054: pushi.e 2
-00055: pop.v.i self._ww
-00057: push.v self._ww
-00059: pushi.e 6
-00060: cmp.i.v LT
-00061: bf 00091
-00062: push.v self.display_width
-00064: pushi.e 640
-00065: push.v self._ww
-00067: mul.v.i
-00068: cmp.v.v GT
-00069: bf 00078
-00070: push.v self.display_height
-00072: pushi.e 480
-00073: push.v self._ww
-00075: mul.v.i
-00076: cmp.v.v GT
-00077: b 00079
-00078: push.e 0
-00079: bf 00084
-00080: push.v self._ww
-00082: pop.v.v self.window_size_multiplier
-00084: push.v self._ww
-00086: pushi.e 1
-00087: add.i.v
-00088: pop.v.v self._ww
-00090: b 00057
-00091: push.v self.window_size_multiplier
-00093: pushi.e 1
-00094: cmp.i.v GT
-00095: bf 00110
-00096: pushi.e 480
-00097: push.v self.window_size_multiplier
-00099: mul.v.i
-00100: pushi.e 640
-00101: push.v self.window_size_multiplier
-00103: mul.v.i
-00104: call.i window_set_size(argc=2)
-00106: popz.v
-00107: pushi.e 1
-00108: pop.v.i self.window_center_toggle
-00110: call.i scr_controls_default(argc=0)
-00112: popz.v
-00113: call.i scr_ascii_input_names(argc=0)
-00115: popz.v
-00116: pushi.e 0
-00117: pop.v.i self.i
-00119: push.v self.i
-00121: pushi.e 10
-00122: cmp.i.v LT
-00123: bf func_end
-00124: pushi.e 0
-00125: pushi.e -5
-00126: push.v self.i
-00128: conv.v.i
-00129: pop.v.i [array]input_pressed
-00131: pushi.e 0
-00132: pushi.e -5
-00133: push.v self.i
-00135: conv.v.i
-00136: pop.v.i [array]input_held
-00138: pushi.e 0
-00139: pushi.e -5
-00140: push.v self.i
-00142: conv.v.i
-00143: pop.v.i [array]input_released
-00145: push.v self.i
-00147: pushi.e 1
-00148: add.i.v
-00149: pop.v.v self.i
-00151: b 00119
+//Set osflavor and savedata TODO: implement obj_time_Other_72 code for obj_time to set savedata dynamically
+Data.Scripts.ByName("__init_global")?.Code.Append(Assembler.Assemble(@"
+pushi.e 5
+pop.v.i global.osflavor
+call.i ds_map_create(argc=0)
+pop.v.i global.savedata
 ", Data.Functions, Data.Variables, Data.Strings));
 
-// Extra scripts for ossafe
+// Part 1, adding new functions and scripts
+
 strlen.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushvar.v self.argument0
@@ -461,9 +358,8 @@ Data.Code.Add(substr);
 Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = substr.Name });
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("substr"), Code = substr });
 Data.Functions.EnsureDefined("substr", Data.Strings);
-//TODO: add the other functions code left (buffer_async_begin...) (double TODO heh)
 
-// Saves savedata(ofc)
+//Savedata
 ossafe_savedata_save.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 .localvar 1 json " + var_json + @"
@@ -699,7 +595,7 @@ Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = ossafe_game_end.Name });
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("ossafe_game_end"), Code = ossafe_game_end });
 Data.Functions.EnsureDefined("ossafe_game_end", Data.Strings);
 
-//Fills ands draws rectangles? I'm leaving this here because I will try to add borders here as well ;D
+//Fills the black rectangle around the game in background? I'm leaving this here because I will try to add borders like undertale later on :D
 ossafe_fill_rectangle.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 .localvar 1 x1 " + var_x1 + @"
@@ -1092,7 +988,7 @@ Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = ossafe_file_text_open_wri
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("ossafe_file_text_open_write"), Code = ossafe_file_text_open_write });
 Data.Functions.EnsureDefined("ossafe_file_text_open_write", Data.Strings);
 
-//...
+//Todo: remove the hacky hack for global.osflavor (now handled by ibj_initializer)
 ossafe_file_text_open_read.Append(Assembler.Assemble(@"
 .localvar 0 arguments
 .localvar 1 name " + var_name1 + @"
@@ -1280,7 +1176,7 @@ ossafe_file_text_eof.Append(Assembler.Assemble(@"
 Data.Code.Add(ossafe_file_text_eof);
 Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = ossafe_file_text_eof.Name });
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("ossafe_file_text_eof"), Code = ossafe_file_text_eof });
-Data.Functions.EnsureDefined("ossafe_file_text_eof", Data.Strings);
+Data.Functions.EnsureDefined("ossafe_file_text_eof", Data.Strings); //TODO: Function file_text_eof is already declared why the fuck do I have to set anoher one
 
 //...
 ossafe_file_text_close.Append(Assembler.Assemble(@"
@@ -1375,10 +1271,9 @@ Data.CodeLocals.Add(new UndertaleCodeLocals() { Name = ossafe_file_delete.Name }
 Data.Scripts.Add(new UndertaleScript() { Name = Data.Strings.MakeString("ossafe_file_delete"), Code = ossafe_file_delete });
 Data.Functions.EnsureDefined("ossafe_file_delete", Data.Strings);
 
-//Save code fixing:
-//Replacing necessary file calls with the ossafe ones ;D
 
-//custom deltarune saveprocess using ossafe calls, idk if this is gonna work, we will see...
+//Part 2, replacing necessary file calls with the ossafe ones ;D
+
 Data.Scripts.ByName("scr_saveprocess")?.Code.Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: pushglb.v global.time
@@ -2094,224 +1989,6 @@ Data.Scripts.ByName("scr_save")?.Code.Replace(Assembler.Assemble(@"
 00122: popz.v
 00124: call.i ossafe_savedata_save(argc=0)
 00126: popz.v
-", Data.Functions, Data.Variables, Data.Strings));
-
-//Saveprocess replacement using ossafe functions TODO: remove this replacement code and fix stuff for deltarune
-Data.Scripts.ByName("scr_saveprocess_ut")?.Code.Replace(Assembler.Assemble(@"
-.localvar 0 arguments
-00000: pushglb.v global.kills
-00002: pop.v.v global.lastsavedkills
-00004: push.v 320.time
-00006: pop.v.v global.lastsavedtime
-00008: pushglb.v global.lv
-00010: pop.v.v global.lastsavedlv
-00012: push.s ""file""@2714
-00014: pushglb.v global.filechoice
-00016: call.i string(argc=1)
-00018: add.v.s
-00019: pop.v.v self.file
-00021: push.v self.file
-00023: call.i ossafe_file_text_open_write(argc=1)
-00025: pop.v.v self.myfileid
-00027: pushglb.v global.charname
-00029: push.v self.myfileid
-00031: call.i ossafe_file_text_write_string(argc=2)
-00033: popz.v
-00034: push.v self.myfileid
-00036: call.i ossafe_file_text_writeln(argc=1)
-00038: popz.v
-00039: pushglb.v global.lv
-00041: push.v self.myfileid
-00043: call.i ossafe_file_text_write_real(argc=2)
-00045: popz.v
-00046: push.v self.myfileid
-00048: call.i ossafe_file_text_writeln(argc=1)
-00050: popz.v
-00051: pushglb.v global.maxhp
-00053: push.v self.myfileid
-00055: call.i ossafe_file_text_write_real(argc=2)
-00057: popz.v
-00058: push.v self.myfileid
-00060: call.i ossafe_file_text_writeln(argc=1)
-00062: popz.v
-00063: pushglb.v global.maxen
-00065: push.v self.myfileid
-00067: call.i ossafe_file_text_write_real(argc=2)
-00069: popz.v
-00070: push.v self.myfileid
-00072: call.i ossafe_file_text_writeln(argc=1)
-00074: popz.v
-00075: pushglb.v global.at
-00077: push.v self.myfileid
-00079: call.i ossafe_file_text_write_real(argc=2)
-00081: popz.v
-00082: push.v self.myfileid
-00084: call.i ossafe_file_text_writeln(argc=1)
-00086: popz.v
-00087: pushglb.v global.wstrength
-00089: push.v self.myfileid
-00091: call.i ossafe_file_text_write_real(argc=2)
-00093: popz.v
-00094: push.v self.myfileid
-00096: call.i ossafe_file_text_writeln(argc=1)
-00098: popz.v
-00099: pushglb.v global.df
-00101: push.v self.myfileid
-00103: call.i ossafe_file_text_write_real(argc=2)
-00105: popz.v
-00106: push.v self.myfileid
-00108: call.i ossafe_file_text_writeln(argc=1)
-00110: popz.v
-00111: pushglb.v global.adef
-00113: push.v self.myfileid
-00115: call.i ossafe_file_text_write_real(argc=2)
-00117: popz.v
-00118: push.v self.myfileid
-00120: call.i ossafe_file_text_writeln(argc=1)
-00122: popz.v
-00123: pushglb.v global.sp
-00125: push.v self.myfileid
-00127: call.i ossafe_file_text_write_real(argc=2)
-00129: popz.v
-00130: push.v self.myfileid
-00132: call.i ossafe_file_text_writeln(argc=1)
-00134: popz.v
-00135: pushglb.v global.xp
-00137: push.v self.myfileid
-00139: call.i ossafe_file_text_write_real(argc=2)
-00141: popz.v
-00142: push.v self.myfileid
-00144: call.i ossafe_file_text_writeln(argc=1)
-00146: popz.v
-00147: pushglb.v global.gold
-00149: push.v self.myfileid
-00151: call.i ossafe_file_text_write_real(argc=2)
-00153: popz.v
-00154: push.v self.myfileid
-00156: call.i ossafe_file_text_writeln(argc=1)
-00158: popz.v
-00159: pushglb.v global.kills
-00161: push.v self.myfileid
-00163: call.i ossafe_file_text_write_real(argc=2)
-00165: popz.v
-00166: push.v self.myfileid
-00168: call.i ossafe_file_text_writeln(argc=1)
-00170: popz.v
-00171: pushi.e 0
-00172: pop.v.i self.i
-00174: push.v self.i
-00176: pushi.e 8
-00177: cmp.i.v LT
-00178: bf 00218
-00179: pushi.e -5
-00180: push.v self.i
-00182: conv.v.i
-00183: push.v [array]item
-00185: push.v self.myfileid
-00187: call.i ossafe_file_text_write_real(argc=2)
-00189: popz.v
-00190: push.v self.myfileid
-00192: call.i ossafe_file_text_writeln(argc=1)
-00194: popz.v
-00195: pushi.e -5
-00196: push.v self.i
-00198: conv.v.i
-00199: push.v [array]phone
-00201: push.v self.myfileid
-00203: call.i ossafe_file_text_write_real(argc=2)
-00205: popz.v
-00206: push.v self.myfileid
-00208: call.i ossafe_file_text_writeln(argc=1)
-00210: popz.v
-00211: push.v self.i
-00213: pushi.e 1
-00214: add.i.v
-00215: pop.v.v self.i
-00217: b 00174
-00218: pushglb.v global.weapon
-00220: push.v self.myfileid
-00222: call.i ossafe_file_text_write_real(argc=2)
-00224: popz.v
-00225: push.v self.myfileid
-00227: call.i ossafe_file_text_writeln(argc=1)
-00229: popz.v
-00230: pushglb.v global.armor
-00232: push.v self.myfileid
-00234: call.i ossafe_file_text_write_real(argc=2)
-00236: popz.v
-00237: push.v self.myfileid
-00239: call.i ossafe_file_text_writeln(argc=1)
-00241: popz.v
-00242: pushi.e 0
-00243: pop.v.i self.i
-00245: push.v self.i
-00247: pushi.e 512
-00248: cmp.i.v LT
-00249: bf 00273
-00250: pushi.e -5
-00251: push.v self.i
-00253: conv.v.i
-00254: push.v [array]flag
-00256: push.v self.myfileid
-00258: call.i ossafe_file_text_write_real(argc=2)
-00260: popz.v
-00261: push.v self.myfileid
-00263: call.i ossafe_file_text_writeln(argc=1)
-00265: popz.v
-00266: push.v self.i
-00268: pushi.e 1
-00269: add.i.v
-00270: pop.v.v self.i
-00272: b 00245
-00273: pushglb.v global.plot
-00275: push.v self.myfileid
-00277: call.i ossafe_file_text_write_real(argc=2)
-00279: popz.v
-00280: push.v self.myfileid
-00282: call.i ossafe_file_text_writeln(argc=1)
-00284: popz.v
-00285: pushi.e 0
-00286: pop.v.i self.i
-00288: push.v self.i
-00290: pushi.e 3
-00291: cmp.i.v LT
-00292: bf 00316
-00293: pushi.e -5
-00294: push.v self.i
-00296: conv.v.i
-00297: push.v [array]menuchoice
-00299: push.v self.myfileid
-00301: call.i ossafe_file_text_write_real(argc=2)
-00303: popz.v
-00304: push.v self.myfileid
-00306: call.i ossafe_file_text_writeln(argc=1)
-00308: popz.v
-00309: push.v self.i
-00311: pushi.e 1
-00312: add.i.v
-00313: pop.v.v self.i
-00315: b 00288
-00316: pushglb.v global.currentsong
-00318: push.v self.myfileid
-00320: call.i ossafe_file_text_write_real(argc=2)
-00322: popz.v
-00323: push.v self.myfileid
-00325: call.i ossafe_file_text_writeln(argc=1)
-00327: popz.v
-00328: pushglb.v global.currentroom
-00330: push.v self.myfileid
-00332: call.i ossafe_file_text_write_real(argc=2)
-00334: popz.v
-00335: push.v self.myfileid
-00337: call.i ossafe_file_text_writeln(argc=1)
-00339: popz.v
-00340: push.v 320.time
-00342: push.v self.myfileid
-00344: call.i ossafe_file_text_write_real(argc=2)
-00346: popz.v
-00347: push.v self.myfileid
-00349: call.i ossafe_file_text_close(argc=1)
-00351: popz.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
 //gml_Object_DEVICE_MENU_Other_15.gml
@@ -5726,7 +5403,7 @@ Data.GameObjects.ByName("DEVICE_FAILURE").EventHandlerFor(EventType.Step, Data.S
 00492: popenv 00455
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//All of this just to replace two calls, are you searious? Insane
+//All of this just to replace two calls, are you serious? Insane
 Data.GameObjects.ByName("DEVICE_CONTACT").EventHandlerFor(EventType.Step, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
 .localvar 0 arguments
 00000: push.v self.EVENT
@@ -14083,7 +13760,84 @@ Data.Scripts.ByName("scr_change_language")?.Code.Replace(Assembler.Assemble(@"
 00037: popz.v
 ", Data.Functions, Data.Variables, Data.Strings));
 
-//TODO: Remove ossafe_savedata_save and ossafe_savedata_load
-//End of the ALPHA part
+Data.GameObjects.ByName("obj_initializer2").EventHandlerFor(EventType.Create, Data.Strings, Data.Code, Data.CodeLocals).Replace(Assembler.Assemble(@"
+.localvar 0 arguments
+00000: push.s ""true_config.ini""@3518
+00002: conv.s.v
+00003: call.i ossafe_ini_open(argc=1)
+00005: popz.v
+00006: push.s ""en""@2775
+00008: conv.s.v
+00009: push.s ""LANG""@3519
+00011: conv.s.v
+00012: push.s ""LANG""@3519
+00014: conv.s.v
+00015: call.i ini_read_string(argc=3)
+00017: pop.v.v global.lang
+00019: call.i ossafe_ini_close(argc=0)
+00021: popz.v
+00022: pushi.e 0
+00023: conv.i.v
+00024: pushi.e 20
+00025: conv.i.v
+00026: push.s ""0123456789""@7398
+00028: conv.s.v
+00029: pushi.e 677
+00030: conv.i.v
+00031: call.i font_add_sprite_ext(argc=4)
+00033: pop.v.v global.damagefont
+00035: pushi.e 2
+00036: conv.i.v
+00037: pushi.e 0
+00038: conv.i.v
+00039: push.s ""obj_initializer2_slash_Create_0_gml_2_0""@10050
+00041: conv.s.v
+00042: call.i scr_84_get_lang_string(argc=1)
+00044: pushi.e 907
+00045: conv.i.v
+00046: call.i font_add_sprite_ext(argc=4)
+00048: pop.v.v global.hpfont
+00050: call.i scr_gamestart(argc=0)
+00052: popz.v
+00053: pushi.e 0
+00054: pop.v.i self.i
+00056: push.v self.i
+00058: pushi.e 100
+00059: cmp.i.v LT
+00060: bf 00075
+00061: pushi.e 0
+00062: pushi.e -5
+00063: push.v self.i
+00065: conv.v.i
+00066: pop.v.i [array]tempflag
+00068: push.v self.i
+00070: pushi.e 1
+00071: add.i.v
+00072: pop.v.v self.i
+00074: b 00056
+00075: pushi.e 300
+00076: pop.v.i global.heartx
+00078: pushi.e 220
+00079: pop.v.i global.hearty
+00081: pushi.e 1
+00082: conv.i.v
+00083: call.i audio_group_load(argc=1)
+00085: popz.v
+00086: pushi.e 320
+00087: conv.i.v
+00088: call.i instance_exists(argc=1)
+00090: conv.v.b
+00091: not.b
+00092: bf func_end
+00093: pushi.e 320
+00094: conv.i.v
+00095: pushi.e 0
+00096: conv.i.v
+00097: pushi.e 0
+00098: conv.i.v
+00099: call.i instance_create(argc=3)
+00101: popz.v
+", Data.Functions, Data.Variables, Data.Strings));
 
-ScriptMessage("Patched!");
+//The End 
+ScriptMessage("Patched! ;D");
