@@ -1,12 +1,15 @@
 //DeltaPatcherStable script, currently fixes the controls and some collisions
 
 EnsureDataLoaded();
-ScriptMessage("DELTARUNE patcher (stable version) for the Nintendo Switch\nv0.2");
+ScriptMessage("DELTARUNE patcher for the Nintendo Switch\nv0.3 (stable)");
 
-//Fix the collision problems in the rest of interactable objects, HOTFIX, TODO: Fix it properly (c'mon freak)
+//The game will no longer request internet access when launching it :D
+Data.GeneralInfo.GMS2AllowStatistics = false;
+
+//Fix collision problems for interactable objects (quick hack which fixes every collision)
 Data.GameObjects.ByName("obj_interactablesolid").ParentId = Data.GameObjects.ByName("obj_solidlong");
 
-//Fix some collisions: TODO: properlly fix the solid long collisions being ignored
+//Fix a few collisions being "transparent" (another ugly hack but hey)
 Data.Rooms.ByName("room_krishallway").GameObjects.Add(new UndertaleRoom.GameObject(){   
  InstanceID = Data.GeneralInfo.LastObj++,
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
@@ -27,7 +30,7 @@ Data.Rooms.ByName("room_dark_eyepuzzle").GameObjects.Add(new UndertaleRoom.GameO
  ObjectDefinition = Data.GameObjects.ByName("obj_solidblock"),
  X = -20, Y = 400, ScaleX = 70 });
  
-//Fix left-stick up and down inverted:
+//Fix wrong left stick up-down directions:
 
 //Up pressed
 Data.Scripts.ByName("up_p")?.Code.Replace(Assembler.Assemble(@"
