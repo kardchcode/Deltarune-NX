@@ -12,5 +12,3 @@ The unstable version of the script (DeltaPatcherAlpha.csx) currently fucks up th
 >- Chose the previously downloaded file **DeltaPatcherStable.csx** from this git repo and let ir run!
 >- Once the opened info window says **Patched!** you can now click Accept and click **File** and then **Save** at the top.
 >- Save your patched win game with the name ***game.win***
-
-Please, use the stable version of this script if you don't want a console crash when waking up from the bedroom (in game ofc)
